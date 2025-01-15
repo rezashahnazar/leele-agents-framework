@@ -1,5 +1,5 @@
 import * as React from "react";
-import { cva, type VariantProps } from "class-variance-authority";
+import { cva } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 import { Bot } from "lucide-react";
 import ReactMarkdown from "react-markdown";
@@ -27,36 +27,39 @@ const messageVariants = cva(
   }
 );
 
-interface MessageProps
-  extends React.HTMLAttributes<HTMLDivElement>,
-    VariantProps<typeof messageVariants> {
+interface MessageProps {
+  type: "error" | "status" | "plan" | "result" | "refinement";
   message: string;
-  type?: "status" | "plan" | "result" | "refinement" | "error";
-  timestamp?: number;
-  index?: number;
-  total?: number;
+  timestamp: number;
+  index: number;
+  total: number;
   expanded?: boolean;
   onExpand?: () => void;
+  onCopy?: () => void;
 }
 
 export function Message({
-  className,
-  type = "status",
+  type,
   message,
   timestamp,
   index,
   total,
   expanded,
   onExpand,
-  ...divProps
+  onCopy,
 }: MessageProps) {
   return (
-    <div className={cn(messageVariants({ type, className }))} {...divProps}>
+    <div
+      className={cn(messageVariants({ type }), "cursor-pointer")}
+      onClick={onExpand}
+      role="button"
+      tabIndex={0}
+    >
       <div className="flex h-6 w-6 items-center justify-center rounded-full bg-white/10">
         <Bot className="h-4 w-4" />
       </div>
 
-      <div className="flex-1 space-y-2">
+      <div className={cn("flex-1 space-y-2", expanded && "expanded")}>
         <div className="flex items-center gap-2">
           <span className="text-[10px] font-medium uppercase tracking-wider text-foreground/80">
             {type}
@@ -70,6 +73,30 @@ export function Message({
             <span className="ml-auto text-[10px] tabular-nums text-foreground/60">
               {new Date(timestamp).toLocaleTimeString()}
             </span>
+          )}
+          {onCopy && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onCopy();
+              }}
+              className="p-1 hover:bg-white/10 rounded-md"
+              title="Copy message"
+            >
+              <svg
+                className="w-3 h-3 opacity-50"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                />
+              </svg>
+            </button>
           )}
         </div>
 

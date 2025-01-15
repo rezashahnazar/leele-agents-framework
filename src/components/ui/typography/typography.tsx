@@ -44,36 +44,29 @@ const variantElementMap = {
   p: "p",
   blockquote: "blockquote",
   code: "code",
-  lead: "p",
+  lead: "div",
   large: "div",
   small: "small",
-  muted: "p",
+  muted: "div",
 } as const;
 
 type VariantKey = keyof typeof variantElementMap;
-type ElementType = (typeof variantElementMap)[VariantKey];
 
 export interface TypographyProps
-  extends Omit<React.HTMLAttributes<HTMLElement>, "color">,
+  extends Omit<React.HTMLAttributes<HTMLElement>, "ref">,
     VariantProps<typeof typographyVariants> {
   asChild?: boolean;
 }
 
 const Typography = React.forwardRef<HTMLElement, TypographyProps>(
-  ({ className, variant = "p", weight, align, children, ...props }, ref) => {
-    const Comp = variantElementMap[variant || "p"] as ElementType;
+  ({ className, variant = "p", weight, align, ...props }, ref) => {
+    const Comp = variantElementMap[variant as VariantKey];
 
-    return (
-      <Comp
-        className={cn(
-          typographyVariants({ variant, weight, align, className })
-        )}
-        ref={ref as any}
-        {...props}
-      >
-        {children}
-      </Comp>
-    );
+    return React.createElement(Comp, {
+      ref,
+      className: cn(typographyVariants({ variant, weight, align, className })),
+      ...props,
+    });
   }
 );
 Typography.displayName = "Typography";

@@ -127,7 +127,7 @@ export default function AgentClientPage() {
           {/* Magical AI Background Effect */}
           <div className="absolute inset-0 pointer-events-none">
             <div
-              className="absolute inset-0 opacity-20 transition-opacity duration-500 dark:opacity-30"
+              className="absolute inset-0 opacity-10 transition-opacity duration-500 dark:opacity-30"
               style={{
                 background: `
                   radial-gradient(circle at 0% 0%, hsl(var(--secondary)) 0%, transparent 50%),
@@ -150,7 +150,7 @@ export default function AgentClientPage() {
                   className={`text-xl md:text-2xl font-semibold bg-clip-text text-transparent bg-gradient-to-r transition-all duration-500 ${
                     theme === "dark"
                       ? "from-blue-400 to-purple-400"
-                      : "from-blue-600 to-purple-600"
+                      : "from-blue-500/80 to-purple-500/80"
                   }`}
                 >
                   LeelE Agent Framework
@@ -178,8 +178,8 @@ export default function AgentClientPage() {
               {/* Input Panel */}
               <div
                 className={`relative transition-all duration-500 rounded-2xl overflow-hidden
-                  bg-secondary/50 dark:bg-secondary/20 border-border
-                  ${isInputFocused ? "ring-2 ring-primary/30" : ""}`}
+                  bg-secondary/30 dark:bg-secondary/20 border-border
+                  ${isInputFocused ? "ring-2 ring-primary/20" : ""}`}
               >
                 <div className="h-full flex flex-col p-4">
                   <div className="flex items-center justify-between mb-3 flex-shrink-0">
@@ -210,7 +210,7 @@ export default function AgentClientPage() {
                       className={`flex-1 p-3 rounded-xl resize-none font-mono text-xs transition-colors duration-300 ${
                         theme === "dark"
                           ? "bg-black/20 text-white/90 placeholder-white/30"
-                          : "bg-white/50 text-black/90 placeholder-black/30"
+                          : "bg-white/80 text-black/80 placeholder-black/40"
                       } focus:outline-none`}
                     />
                   </div>
@@ -225,7 +225,7 @@ export default function AgentClientPage() {
                       } ${
                         theme === "dark"
                           ? "bg-white/10 hover:bg-white/15 text-white"
-                          : "bg-black/10 hover:bg-black/15 text-black"
+                          : "bg-black/5 hover:bg-black/10 text-black/70"
                       }`}
                     >
                       {isLoading ? (

@@ -25,6 +25,10 @@ export function LogsPanel({ logs, setLogs }: LogsPanelProps) {
     setSearchTerm("");
   };
 
+  const handleClearLogs = () => {
+    setLogs([]);
+  };
+
   const groupedLogs = logs.reduce((acc, log) => {
     if (filter !== "all" && log.type !== filter) return acc;
     if (
@@ -46,7 +50,7 @@ export function LogsPanel({ logs, setLogs }: LogsPanelProps) {
     <Panel>
       <PanelHeader>
         <div className="flex items-center justify-between">
-          <div className="flex items-center justify-between w-full">
+          <div className="flex items-center justify-between w-full gap-2">
             <SearchInput
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
@@ -54,18 +58,26 @@ export function LogsPanel({ logs, setLogs }: LogsPanelProps) {
               placeholder="Search logs..."
               className="min-w-[240px]"
             />
-            <FilterButton
-              options={[
-                { label: "All Messages", value: "all" },
-                { label: "Status Updates", value: "status" },
-                { label: "Action Plans", value: "plan" },
-                { label: "Results", value: "result" },
-                { label: "Refinements", value: "refinement" },
-                { label: "Errors", value: "error" },
-              ]}
-              value={filter}
-              onChange={setFilter}
-            />
+            <div className="flex items-center gap-2">
+              <button
+                onClick={handleClearLogs}
+                className="px-2 py-1 text-xs rounded-md bg-red-500/10 text-red-500 hover:bg-red-500/20"
+              >
+                Clear All
+              </button>
+              <FilterButton
+                options={[
+                  { label: "All Messages", value: "all" },
+                  { label: "Status Updates", value: "status" },
+                  { label: "Action Plans", value: "plan" },
+                  { label: "Results", value: "result" },
+                  { label: "Refinements", value: "refinement" },
+                  { label: "Errors", value: "error" },
+                ]}
+                value={filter}
+                onChange={setFilter}
+              />
+            </div>
           </div>
         </div>
       </PanelHeader>
