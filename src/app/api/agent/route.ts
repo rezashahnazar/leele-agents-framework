@@ -19,6 +19,13 @@ const sendSSEMessage = async (
   await writer.write(encoder.encode(`data: ${JSON.stringify(data)}\n\n`));
 };
 
+// If these are API responses, we should define interfaces for them
+interface ApiResponse {
+  // Add relevant fields based on your API response
+  message: string;
+  data: unknown;
+}
+
 export async function POST(request: NextRequest) {
   const { userPrompt } = await request.json();
 

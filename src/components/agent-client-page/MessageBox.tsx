@@ -1,29 +1,19 @@
 import React, { useRef, useEffect, useState } from "react";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
-import { LogMessage } from "@/app/types";
+import { Message } from "@/app/types";
 import { MessageContent } from "../ui/message-sections/message-content";
 
 interface MessageBoxProps {
-  log: LogMessage;
-  getMessageIcon: (type: string) => React.ReactNode;
-  formatTimestamp: (timestamp?: number) => string;
-  theme: "light" | "dark";
+  message: Message;
   index: number;
   totalMessages: number;
-  isLastInGroup: boolean;
   isExpanded: boolean;
   onExpand: () => void;
 }
 
 export function MessageBox({
-  log,
-  getMessageIcon,
-  formatTimestamp,
-  theme,
+  message,
   index,
   totalMessages,
-  isLastInGroup,
   isExpanded,
   onExpand,
 }: MessageBoxProps) {
@@ -34,9 +24,9 @@ export function MessageBox({
     if (contentRef.current) {
       setShouldShowExpandButton(contentRef.current.scrollHeight > 16);
     }
-  }, [log.message]);
+  }, [message.message]);
 
-  const getTypeColor = (type: string, isDark = theme === "dark") => {
+  const getTypeColor = (type: string, isDark = message.theme === "dark") => {
     const colors = {
       status: {
         light: {
@@ -125,12 +115,12 @@ export function MessageBox({
       },
     };
 
-    return (colors[type as keyof typeof colors] || defaultColors)[
-      isDark ? "dark" : "light"
+    return (colors[message.type as keyof typeof colors] || defaultColors)[
+      message.theme === "dark" ? "dark" : "light"
     ];
   };
 
-  const colors = getTypeColor(log.type);
+  const colors = getTypeColor(message.type);
 
   return (
     <div
@@ -155,7 +145,7 @@ export function MessageBox({
             <span
               className={`text-[10px] uppercase tracking-wider font-medium ${colors.text} opacity-90`}
             >
-              {log.type}
+              {message.type}
             </span>
           </div>
 
@@ -164,10 +154,10 @@ export function MessageBox({
               className={`
                 font-mono text-[10px]
                 transition-colors duration-150
-                ${theme === "dark" ? "text-white/40" : "text-black/40"}
+                ${message.theme === "dark" ? "text-white/40" : "text-black/40"}
               `}
             >
-              {formatTimestamp(log.timestamp?.getTime())}
+              {formatTimestamp(message.timestamp?.getTime())}
             </span>
             {index === totalMessages - 1 && (
               <span
@@ -176,7 +166,7 @@ export function MessageBox({
                   text-[9px] font-medium tracking-wide
                   transition-colors duration-150
                   ${
-                    theme === "dark"
+                    message.theme === "dark"
                       ? "bg-emerald-400/10 text-emerald-300"
                       : "bg-emerald-500/10 text-emerald-600"
                   }
@@ -189,7 +179,7 @@ export function MessageBox({
               className={`
                 font-mono text-[9px] tabular-nums
                 transition-colors duration-150
-                ${theme === "dark" ? "text-white/30" : "text-black/30"}
+                ${message.theme === "dark" ? "text-white/30" : "text-black/30"}
               `}
             >
               #{index + 1}
@@ -200,10 +190,10 @@ export function MessageBox({
         {/* Content */}
         <div className="relative">
           <MessageContent
-            content={log.message}
+            content={message.message}
             expanded={isExpanded}
             onExpand={onExpand}
-            theme={theme === "dark" ? "dark" : "light"}
+            theme={message.theme === "dark" ? "dark" : "light"}
           />
 
           {/* Actions */}
@@ -219,13 +209,13 @@ export function MessageBox({
             <button
               onClick={(e) => {
                 e.stopPropagation();
-                navigator.clipboard.writeText(log.message);
+                navigator.clipboard.writeText(message.message);
               }}
               className={`
                 p-1 rounded-md
                 transition-all duration-150
                 ${
-                  theme === "dark"
+                  message.theme === "dark"
                     ? "text-white/40 hover:text-white/90 hover:bg-white/5"
                     : "text-black/40 hover:text-black/90 hover:bg-black/5"
                 }
@@ -251,4 +241,9 @@ export function MessageBox({
       </div>
     </div>
   );
+}
+
+function formatTimestamp(timestamp?: number): string {
+  if (!timestamp) return "";
+  return new Date(timestamp).toLocaleTimeString();
 }

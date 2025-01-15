@@ -27,7 +27,7 @@ export function Text({
   monospace = false,
   truncate = false,
 }: TextProps) {
-  const { colors, transitions } = useTheme();
+  const { colors } = useTheme();
 
   const sizeStyles = {
     xs: "text-[10px] leading-[14px]",

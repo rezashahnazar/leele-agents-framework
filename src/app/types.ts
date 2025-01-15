@@ -1,5 +1,7 @@
-export interface LogMessage {
+export interface Message {
+  id: string;
   type: "status" | "plan" | "result" | "refinement" | "error";
   message: string;
-  timestamp?: Date;
+  timestamp: Date;
+  theme: "light" | "dark";
 }

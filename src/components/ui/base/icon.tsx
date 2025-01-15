@@ -4,7 +4,7 @@ import { useTheme } from "@/lib/theme-context";
 export type IconSize = "xs" | "sm" | "base" | "lg";
 type IconVariant = "primary" | "secondary" | "ghost";
 
-interface IconProps {
+interface IconProps extends React.ComponentProps<"svg"> {
   children: React.ReactNode;
   size?: IconSize;
   variant?: IconVariant;
@@ -18,6 +18,7 @@ export function Icon({
   variant = "primary",
   className = "",
   strokeWidth = 1.5,
+  ...props
 }: IconProps) {
   const { colors } = useTheme();
 

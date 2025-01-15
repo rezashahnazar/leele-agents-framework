@@ -1,21 +1,19 @@
 import React from "react";
 import { Icon } from "../base/icon";
+import { Message } from "@/app/types";
 
 interface MessageActionsProps {
-  content: string;
+  message: Message;
   expanded: boolean;
-  isHovered: boolean;
   onCopy: () => void;
-  onExpand?: () => void;
-  theme: "light" | "dark";
+  onExpand: () => void;
 }
 
 export function MessageActions({
+  message,
   expanded,
-  isHovered,
   onCopy,
-  onExpand = () => {},
-  theme,
+  onExpand,
 }: MessageActionsProps) {
   return (
     <div className="flex items-center gap-1">
@@ -30,7 +28,7 @@ export function MessageActions({
           p-1.5 rounded-md
           transition-colors duration-200
           ${
-            theme === "dark"
+            message.theme === "dark"
               ? "hover:bg-white/5 text-white/40 hover:text-white/80"
               : "hover:bg-black/5 text-black/40 hover:text-black/80"
           }
@@ -67,7 +65,7 @@ export function MessageActions({
           p-1.5 rounded-md
           transition-colors duration-200
           ${
-            theme === "dark"
+            message.theme === "dark"
               ? "hover:bg-white/5 text-white/40 hover:text-white/80"
               : "hover:bg-black/5 text-black/40 hover:text-black/80"
           }

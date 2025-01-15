@@ -19,7 +19,7 @@ export function Surface({
   onClick,
   ...props
 }: SurfaceProps) {
-  const { colors, transitions, blur: blurValues, opacity } = useTheme();
+  const { colors, blur: blurValues, opacity } = useTheme();
 
   const getElevationStyles = () => {
     switch (elevation) {

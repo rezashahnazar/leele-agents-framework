@@ -32,9 +32,8 @@ export function Button({
   disabled = false,
   loading = false,
   className = "",
-  title,
 }: ButtonProps) {
-  const { colors, transitions } = useTheme();
+  const { colors } = useTheme();
 
   const sizeStyles = {
     sm: "px-2 py-1 gap-1.5",

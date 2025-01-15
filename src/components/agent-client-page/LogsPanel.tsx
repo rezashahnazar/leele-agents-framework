@@ -1,26 +1,18 @@
 import React, { useState } from "react";
-import { LogMessage } from "@/app/types";
-import { Message } from "@/components/ui/message";
+import { Message } from "@/app/types";
+import { Message as MessageComponent } from "@/components/ui/message";
 import { Panel, PanelHeader, PanelContent } from "@/components/ui/panel";
 import { IconButton } from "@/components/ui/icon-button";
 import { FilterButton } from "@/components/ui/filter-button";
 import { SearchInput } from "@/components/ui/search-input";
 
 interface LogsPanelProps {
-  logs: LogMessage[];
-  setLogs: React.Dispatch<React.SetStateAction<LogMessage[]>>;
-  getMessageIcon: (type: string) => React.ReactNode;
-  formatTimestamp: (timestamp?: number) => string;
+  logs: Message[];
+  setLogs: React.Dispatch<React.SetStateAction<Message[]>>;
   theme: "light" | "dark";
 }
 
-export function LogsPanel({
-  logs,
-  setLogs,
-  getMessageIcon,
-  formatTimestamp,
-  theme,
-}: LogsPanelProps) {
+export function LogsPanel({ logs, setLogs, theme }: LogsPanelProps) {
   const [filter, setFilter] = useState<string>("all");
   const [searchTerm, setSearchTerm] = useState("");
   const [expandedMessageId, setExpandedMessageId] = useState<number | null>(
@@ -39,14 +31,14 @@ export function LogsPanel({
     )
       return acc;
 
-    const date = new Date(log.timestamp || Date.now());
+    const date = log.timestamp;
     const key = date.toLocaleDateString();
     if (!acc[key]) {
       acc[key] = [];
     }
     acc[key].push(log);
     return acc;
-  }, {} as Record<string, LogMessage[]>);
+  }, {} as Record<string, Message[]>);
 
   const stats = logs.reduce((acc, log) => {
     acc[log.type] = (acc[log.type] || 0) + 1;
@@ -191,7 +183,6 @@ export function LogsPanel({
                 <div className="space-y-1 px-3 py-2">
                   {dateLogs.map((log, i) => {
                     const globalIndex = logs.findIndex((l) => l === log);
-                    const isLastInGroup = i === dateLogs.length - 1;
 
                     return (
                       <div
@@ -203,10 +194,10 @@ export function LogsPanel({
                           animation: "slideIn 0.3s ease-out forwards",
                         }}
                       >
-                        <Message
+                        <MessageComponent
                           type={log.type}
                           content={log.message}
-                          timestamp={log.timestamp?.getTime()}
+                          timestamp={log.timestamp.getTime()}
                           index={globalIndex}
                           total={logs.length}
                           expanded={expandedMessageId === globalIndex}
