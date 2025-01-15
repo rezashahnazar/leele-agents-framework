@@ -10,21 +10,21 @@ const openai = new OpenAI({
   apiKey: OPENAI_API_KEY,
 });
 
-// Helper to send SSE messages
+// Define type for SSE message data
+interface SSEMessage {
+  type: string;
+  message: string;
+  data?: unknown;
+}
+
+// Update sendSSEMessage function
 const sendSSEMessage = async (
   writer: WritableStreamDefaultWriter,
   encoder: TextEncoder,
-  data: any
+  data: SSEMessage
 ) => {
   await writer.write(encoder.encode(`data: ${JSON.stringify(data)}\n\n`));
 };
-
-// If these are API responses, we should define interfaces for them
-interface ApiResponse {
-  // Add relevant fields based on your API response
-  message: string;
-  data: unknown;
-}
 
 export async function POST(request: NextRequest) {
   const { userPrompt } = await request.json();
@@ -59,7 +59,7 @@ export async function POST(request: NextRequest) {
         temperature: 0.7,
       });
 
-      const plan = planningResponse.choices[0].message.content;
+      const plan = planningResponse.choices[0].message.content || "";
       await sendSSEMessage(writer, encoder, {
         type: "plan",
         message: plan,
@@ -87,7 +87,7 @@ export async function POST(request: NextRequest) {
         temperature: 0.7,
       });
 
-      const result = executionResponse.choices[0].message.content;
+      const result = executionResponse.choices[0].message.content || "";
       await sendSSEMessage(writer, encoder, {
         type: "result",
         message: result,
@@ -115,7 +115,7 @@ export async function POST(request: NextRequest) {
         temperature: 0.7,
       });
 
-      const refinement = refinementResponse.choices[0].message.content;
+      const refinement = refinementResponse.choices[0].message.content || "";
       await sendSSEMessage(writer, encoder, {
         type: "refinement",
         message: refinement,
@@ -126,11 +126,12 @@ export async function POST(request: NextRequest) {
         type: "status",
         message: "Task completed successfully!",
       });
-    } catch (error: any) {
-      console.error("Error in agent processing:", error);
+    } catch (error) {
+      const err = error as Error;
+      console.error("Error in agent processing:", err);
       await sendSSEMessage(writer, encoder, {
         type: "error",
-        message: error.message || "An error occurred during processing",
+        message: err.message || "An error occurred during processing",
       });
     } finally {
       writer.close();

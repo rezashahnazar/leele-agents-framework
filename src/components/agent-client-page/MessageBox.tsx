@@ -26,7 +26,7 @@ export function MessageBox({
     }
   }, [message.message]);
 
-  const getTypeColor = (type: string, isDark = message.theme === "dark") => {
+  const getTypeColor = (type: string) => {
     const colors = {
       status: {
         light: {
@@ -115,7 +115,7 @@ export function MessageBox({
       },
     };
 
-    return (colors[message.type as keyof typeof colors] || defaultColors)[
+    return (colors[type as keyof typeof colors] || defaultColors)[
       message.theme === "dark" ? "dark" : "light"
     ];
   };

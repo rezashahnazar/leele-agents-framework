@@ -18,7 +18,6 @@ export function Icon({
   variant = "primary",
   className = "",
   strokeWidth = 1.5,
-  ...props
 }: IconProps) {
   const { colors } = useTheme();
 
@@ -46,10 +45,13 @@ export function Icon({
     >
       {React.Children.map(children, (child) => {
         if (React.isValidElement(child)) {
-          return React.cloneElement(child as React.ReactElement<any>, {
-            strokeWidth,
-            className: "w-full h-full",
-          });
+          return React.cloneElement(
+            child as React.ReactElement<React.SVGProps<SVGSVGElement>>,
+            {
+              strokeWidth,
+              className: "w-full h-full",
+            }
+          );
         }
         return child;
       })}

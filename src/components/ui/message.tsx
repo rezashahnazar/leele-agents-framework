@@ -10,8 +10,8 @@ interface MessageProps {
   timestamp?: number;
   index: number;
   total: number;
-  expanded?: boolean;
-  onExpand?: () => void;
+  expanded: boolean;
+  onExpand: () => void;
   theme: "light" | "dark";
 }
 
@@ -21,7 +21,7 @@ export function Message({
   timestamp = Date.now(),
   index,
   total,
-  expanded = false,
+  expanded,
   onExpand,
   theme,
 }: MessageProps) {
@@ -73,12 +73,16 @@ export function Message({
               `}
             >
               <MessageActions
-                content={content}
+                message={{
+                  id: index.toString(),
+                  type,
+                  message: content,
+                  timestamp: new Date(timestamp),
+                  theme,
+                }}
                 expanded={expanded}
                 onExpand={onExpand}
                 onCopy={handleCopy}
-                isHovered={isHovered}
-                theme={theme}
               />
             </div>
           </div>

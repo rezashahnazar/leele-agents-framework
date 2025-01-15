@@ -6,7 +6,7 @@ interface MessageActionsProps {
   message: Message;
   expanded: boolean;
   onCopy: () => void;
-  onExpand: () => void;
+  onExpand?: () => void;
 }
 
 export function MessageActions({
@@ -58,7 +58,7 @@ export function MessageActions({
       <button
         onClick={(e) => {
           e.stopPropagation();
-          onExpand();
+          onExpand?.();
         }}
         className={`
           group

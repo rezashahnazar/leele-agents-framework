@@ -4,7 +4,6 @@ import { Text } from "./base/text";
 import { Icon } from "./base/icon";
 import type { TextSize } from "./base/text";
 import type { IconSize } from "./base/icon";
-import { useTheme } from "@/lib/theme-context";
 
 type ButtonSize = "sm" | "base" | "lg";
 type ButtonVariant = "primary" | "secondary" | "ghost";
@@ -33,8 +32,6 @@ export function Button({
   loading = false,
   className = "",
 }: ButtonProps) {
-  const { colors } = useTheme();
-
   const sizeStyles = {
     sm: "px-2 py-1 gap-1.5",
     base: "px-3 py-1.5 gap-2",
