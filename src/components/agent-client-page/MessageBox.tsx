@@ -2,7 +2,7 @@ import React, { useRef, useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { LogMessage } from "@/app/types";
-import { MessageContent } from "../ui/message--/message-content";
+import { MessageContent } from "../ui/message-sections/message-content";
 
 interface MessageBoxProps {
   log: LogMessage;
