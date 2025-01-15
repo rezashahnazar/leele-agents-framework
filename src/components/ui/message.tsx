@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Surface } from "./base/surface";
-import { MessageHeader } from "./message/message-header";
-import { MessageContent } from "./message/message-content";
-import { MessageActions } from "./message/message-actions";
+import { MessageHeader } from "./message--/message-header";
+import { MessageContent } from "./message--/message-content";
+import { MessageActions } from "./message--/message-actions";
 
 interface MessageProps {
   type: "status" | "plan" | "result" | "refinement" | "error";
@@ -14,29 +14,6 @@ interface MessageProps {
   onExpand?: () => void;
   theme: "light" | "dark";
 }
-
-const typeConfigs = {
-  status: {
-    icon: "◦",
-    color: "neutral",
-  },
-  plan: {
-    icon: "◆",
-    color: "blue",
-  },
-  result: {
-    icon: "■",
-    color: "emerald",
-  },
-  refinement: {
-    icon: "▲",
-    color: "amber",
-  },
-  error: {
-    icon: "●",
-    color: "red",
-  },
-};
 
 export function Message({
   type,

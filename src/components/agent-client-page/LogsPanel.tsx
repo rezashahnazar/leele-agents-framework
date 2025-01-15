@@ -211,6 +211,7 @@ export function LogsPanel({
                           total={logs.length}
                           expanded={expandedMessageId === globalIndex}
                           onExpand={() => handleExpand(globalIndex)}
+                          theme={theme}
                         />
                       </div>
                     );
