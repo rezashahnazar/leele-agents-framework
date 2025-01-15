@@ -9,15 +9,14 @@ export default function AgentClientPage() {
   const [userPrompt, setUserPrompt] = useState("");
   const [logs, setLogs] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [theme, setTheme] = useState<"light" | "dark">(() => {
-    if (typeof window !== "undefined") {
-      return window.matchMedia("(prefers-color-scheme: dark)").matches
-        ? "dark"
-        : "light";
-    }
-    return "light";
-  });
+  const [theme, setTheme] = useState<"light" | "dark">("light");
   const [isInputFocused, setIsInputFocused] = useState(false);
+
+  // Initialize theme based on system preference
+  useEffect(() => {
+    const isDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    setTheme(isDark ? "dark" : "light");
+  }, []);
 
   // Handle keyboard shortcuts with custom hook
   useEffect(() => {
