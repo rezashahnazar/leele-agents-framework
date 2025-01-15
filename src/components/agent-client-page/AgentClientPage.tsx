@@ -1,13 +1,13 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";
-import { LogMessage } from "../../app/types";
+import { Message } from "../../app/types";
 import { LogsPanel } from "./LogsPanel";
 import { ThemeProvider } from "@/lib/theme-context";
 
 export default function AgentClientPage() {
   const [userPrompt, setUserPrompt] = useState("");
-  const [logs, setLogs] = useState<LogMessage[]>([]);
+  const [logs, setLogs] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [theme, setTheme] = useState<"light" | "dark">("light");
   const [isInputFocused, setIsInputFocused] = useState(false);
@@ -50,7 +50,7 @@ export default function AgentClientPage() {
     setLogs([]);
     setIsLoading(true);
 
-    const addLogWithTimestamp = (log: Omit<LogMessage, "timestamp">) => {
+    const addLogWithTimestamp = (log: Omit<Message, "timestamp">) => {
       setLogs((prev) => [...prev, { ...log, timestamp: new Date() }]);
     };
 
@@ -95,8 +95,10 @@ export default function AgentClientPage() {
     } catch (error) {
       console.error("Error:", error);
       addLogWithTimestamp({
+        id: crypto.randomUUID(),
         type: "error",
         message: "Failed to connect to the agent",
+        theme,
       });
     } finally {
       setIsLoading(false);
@@ -354,13 +356,7 @@ export default function AgentClientPage() {
 
               {/* Logs Panel */}
               <div className="relative flex flex-col min-h-0">
-                <LogsPanel
-                  logs={logs}
-                  setLogs={setLogs}
-                  getMessageIcon={getMessageIcon}
-                  formatTimestamp={formatTimestamp}
-                  theme={theme}
-                />
+                <LogsPanel logs={logs} setLogs={setLogs} theme={theme} />
               </div>
             </div>
           </div>
