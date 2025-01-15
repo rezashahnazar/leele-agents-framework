@@ -77,23 +77,23 @@
 
 /* Markdown styles */
 .prose {
-  @apply text-[11px] leading-[1.6];
+  @apply text-[11px] leading-[1.6] text-black/90 dark:text-white/90;
 }
 
 .prose h1 {
-  @apply text-[13px] font-semibold tracking-tight my-1.5;
+  @apply text-[13px] font-semibold tracking-tight my-1.5 text-black/90 dark:text-white/90;
 }
 
 .prose h2 {
-  @apply text-[12px] font-medium tracking-tight my-1.5;
+  @apply text-[12px] font-medium tracking-tight my-1.5 text-black/90 dark:text-white/90;
 }
 
 .prose p {
-  @apply text-[11px] my-1 opacity-90;
+  @apply text-[11px] my-1 text-black/80 dark:text-white/80;
 }
 
 .prose pre {
-  @apply text-[10px] leading-relaxed p-2 my-2 rounded-md bg-black/[0.03] backdrop-blur-sm;
+  @apply text-[10px] leading-relaxed p-2 my-2 rounded-md bg-black/[0.03] backdrop-blur-sm text-black/90 dark:text-white/90;
 }
 
 .dark .prose pre {
@@ -101,7 +101,7 @@
 }
 
 .prose code {
-  @apply text-[10px] px-1 py-0.5 rounded-sm bg-black/[0.03] backdrop-blur-sm;
+  @apply text-[10px] px-1 py-0.5 rounded-sm bg-black/[0.03] backdrop-blur-sm text-black/90 dark:text-white/90;
 }
 
 .dark .prose code {
@@ -114,11 +114,11 @@
 }
 
 .prose li {
-  @apply text-[11px] opacity-90;
+  @apply text-[11px] text-black/80 dark:text-white/80;
 }
 
 .prose blockquote {
-  @apply text-[11px] pl-2 border-l-2 border-black/10 italic opacity-90;
+  @apply text-[11px] pl-2 border-l-2 border-black/10 italic text-black/70 dark:text-white/70;
 }
 
 .dark .prose blockquote {

@@ -52,10 +52,11 @@ export function MessageContent({
           className={`
             absolute inset-x-0 bottom-0
             h-6 pointer-events-none
+            bg-gradient-to-t
             ${
               theme === "dark"
-                ? "bg-gradient-to-t from-[#020617] via-[#020617]/50 to-transparent"
-                : "bg-gradient-to-t from-white via-white/50 to-transparent"
+                ? "from-[#0C0C0C] via-[#0C0C0C]/80 to-transparent"
+                : "from-[rgba(255,255,255,0.9)] via-[rgba(255,255,255,0.7)] to-transparent"
             }
           `}
         />
