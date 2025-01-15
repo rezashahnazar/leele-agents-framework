@@ -1,101 +1,113 @@
-import { useState } from "react";
-import { Surface } from "./base/surface";
-import { MessageHeader } from "./message-sections/message-header";
-import { MessageContent } from "./message-sections/message-content";
-import { MessageActions } from "./message-sections/message-actions";
+import * as React from "react";
+import { cva, type VariantProps } from "class-variance-authority";
+import { cn } from "@/lib/utils";
+import { Bot } from "lucide-react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import { CodeBlock } from "./code-block/code-block";
 
-interface MessageProps {
-  type: "status" | "plan" | "result" | "refinement" | "error";
-  content: string;
+const messageVariants = cva(
+  "group relative flex gap-3 p-4 rounded-lg transition-all duration-150",
+  {
+    variants: {
+      type: {
+        status:
+          "bg-blue-500/5 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300",
+        plan: "bg-purple-500/5 dark:bg-purple-900/20 text-purple-700 dark:text-purple-300",
+        result:
+          "bg-green-500/5 dark:bg-green-900/20 text-green-700 dark:text-green-300",
+        refinement:
+          "bg-yellow-500/5 dark:bg-yellow-900/20 text-yellow-700 dark:text-yellow-300",
+        error: "bg-red-500/5 dark:bg-red-900/20 text-red-700 dark:text-red-300",
+      },
+    },
+    defaultVariants: {
+      type: "status",
+    },
+  }
+);
+
+interface MessageProps
+  extends React.HTMLAttributes<HTMLDivElement>,
+    VariantProps<typeof messageVariants> {
+  message: string;
+  type?: "status" | "plan" | "result" | "refinement" | "error";
   timestamp?: number;
-  index: number;
-  total: number;
-  expanded: boolean;
-  onExpand: () => void;
-  theme: "light" | "dark";
+  index?: number;
+  total?: number;
+  expanded?: boolean;
+  onExpand?: () => void;
 }
 
 export function Message({
-  type,
-  content,
-  timestamp = Date.now(),
+  className,
+  type = "status",
+  message,
+  timestamp,
   index,
   total,
   expanded,
   onExpand,
-  theme,
+  ...divProps
 }: MessageProps) {
-  const [isHovered, setIsHovered] = useState(false);
-
-  const handleCopy = () => {
-    navigator.clipboard.writeText(content);
-  };
-
   return (
-    <div
-      className={`
-        group relative
-        transform-gpu transition-all duration-300
-        ${expanded ? "-mx-2 my-4" : "my-2"}
-      `}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-    >
-      <Surface
-        elevation={expanded ? "medium" : isHovered ? "low" : "none"}
-        className={`
-          relative rounded-lg overflow-hidden
-          border border-black/5 dark:border-white/5
-          transition-all duration-300
-          ${expanded ? "shadow-md" : "shadow-sm"}
-          ${expanded ? "scale-[1.01]" : "scale-100"}
-          ${theme === "dark" ? "bg-[#0C0C0C]/95" : "bg-white/40"}
-        `}
-      >
-        <div className="relative p-4">
-          {/* Header Section */}
-          <div className="flex items-start justify-between gap-4">
-            <MessageHeader
-              type={type}
-              timestamp={timestamp}
-              index={index}
-              total={total}
-              isHovered={isHovered}
-              theme={theme}
-            />
+    <div className={cn(messageVariants({ type, className }))} {...divProps}>
+      <div className="flex h-6 w-6 items-center justify-center rounded-full bg-white/10">
+        <Bot className="h-4 w-4" />
+      </div>
 
-            {/* Quick Actions */}
-            <div
-              className={`
-                flex items-center
-                transition-opacity duration-300
-                ${isHovered ? "opacity-100" : "opacity-0"}
-              `}
-            >
-              <MessageActions
-                message={{
-                  id: index.toString(),
-                  type,
-                  message: content,
-                  timestamp: new Date(timestamp),
-                  theme,
-                }}
-                expanded={expanded}
-                onExpand={onExpand}
-                onCopy={handleCopy}
-              />
-            </div>
-          </div>
-
-          {/* Content Section */}
-          <MessageContent
-            content={content}
-            expanded={expanded}
-            onExpand={onExpand}
-            theme={theme}
-          />
+      <div className="flex-1 space-y-2">
+        <div className="flex items-center gap-2">
+          <span className="text-[10px] font-medium uppercase tracking-wider text-foreground/80">
+            {type}
+          </span>
+          {index !== undefined && total !== undefined && (
+            <span className="text-[10px] tabular-nums text-foreground/60">
+              #{index + 1}/{total}
+            </span>
+          )}
+          {timestamp && (
+            <span className="ml-auto text-[10px] tabular-nums text-foreground/60">
+              {new Date(timestamp).toLocaleTimeString()}
+            </span>
+          )}
         </div>
-      </Surface>
+
+        <div className="prose prose-sm dark:prose-invert max-w-none">
+          <ReactMarkdown
+            remarkPlugins={[remarkGfm]}
+            components={{
+              p: ({ children }) => (
+                <p className="mb-4 last:mb-0 text-foreground/90">{children}</p>
+              ),
+              code(props) {
+                const { className, children } = props;
+                const match = /language-(\w+)/.exec(className || "");
+                const isInline = !match && !String(children).includes("\n");
+
+                if (isInline) {
+                  return (
+                    <code className="rounded-md bg-[#1e1e1e] px-1.5 py-0.5 font-mono text-zinc-200">
+                      {children}
+                    </code>
+                  );
+                }
+
+                const language = match ? match[1] : "python";
+                const code = String(children).replace(/\n$/, "");
+
+                return (
+                  <div className="my-4 first:mt-0 last:mb-0">
+                    <CodeBlock code={code} language={language} size="sm" />
+                  </div>
+                );
+              },
+            }}
+          >
+            {message}
+          </ReactMarkdown>
+        </div>
+      </div>
     </div>
   );
 }

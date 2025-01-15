@@ -9,7 +9,14 @@ export default function AgentClientPage() {
   const [userPrompt, setUserPrompt] = useState("");
   const [logs, setLogs] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [theme, setTheme] = useState<"light" | "dark">("light");
+  const [theme, setTheme] = useState<"light" | "dark">(() => {
+    if (typeof window !== "undefined") {
+      return window.matchMedia("(prefers-color-scheme: dark)").matches
+        ? "dark"
+        : "light";
+    }
+    return "light";
+  });
   const [isInputFocused, setIsInputFocused] = useState(false);
 
   // Handle keyboard shortcuts with custom hook
@@ -43,6 +50,15 @@ export default function AgentClientPage() {
     mediaQuery.addEventListener("change", handleChange);
     return () => mediaQuery.removeEventListener("change", handleChange);
   }, []);
+
+  // Add this useEffect to handle theme class on html element
+  useEffect(() => {
+    if (theme === "dark") {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  }, [theme]);
 
   const handleRunAgent = useCallback(async () => {
     if (!userPrompt.trim() || isLoading) return;
@@ -107,35 +123,19 @@ export default function AgentClientPage() {
 
   return (
     <ThemeProvider theme={theme}>
-      <div
-        className={`min-h-screen transition-colors duration-500 ${
-          theme === "dark" ? "bg-black" : "bg-white"
-        }`}
-      >
+      <div className="min-h-screen transition-colors duration-500 bg-background">
         <div className="relative h-screen overflow-hidden">
           {/* Magical AI Background Effect */}
           <div className="absolute inset-0 pointer-events-none">
             <div
-              className={`absolute inset-0 opacity-20 transition-opacity duration-500 ${
-                theme === "dark" ? "opacity-30" : "opacity-10"
-              }`}
+              className="absolute inset-0 opacity-20 transition-opacity duration-500 dark:opacity-30"
               style={{
                 background: `
-                  radial-gradient(circle at 0% 0%, ${
-                    theme === "dark" ? "#1a1a1a" : "#f0f0f0"
-                  } 0%, transparent 50%),
-                  radial-gradient(circle at 100% 0%, ${
-                    theme === "dark" ? "#2a2a2a" : "#ffffff"
-                  } 0%, transparent 50%),
-                  radial-gradient(circle at 50% 50%, ${
-                    theme === "dark" ? "#303030" : "#fafafa"
-                  } 0%, transparent 50%),
-                  radial-gradient(circle at 0% 100%, ${
-                    theme === "dark" ? "#202020" : "#f5f5f5"
-                  } 0%, transparent 50%),
-                  radial-gradient(circle at 100% 100%, ${
-                    theme === "dark" ? "#252525" : "#ffffff"
-                  } 0%, transparent 50%)
+                  radial-gradient(circle at 0% 0%, hsl(var(--secondary)) 0%, transparent 50%),
+                  radial-gradient(circle at 100% 0%, hsl(var(--secondary)) 0%, transparent 50%),
+                  radial-gradient(circle at 50% 50%, hsl(var(--secondary)) 0%, transparent 50%),
+                  radial-gradient(circle at 0% 100%, hsl(var(--secondary)) 0%, transparent 50%),
+                  radial-gradient(circle at 100% 100%, hsl(var(--secondary)) 0%, transparent 50%)
                 `,
               }}
             >
@@ -154,7 +154,7 @@ export default function AgentClientPage() {
                       : "from-blue-600 to-purple-600"
                   }`}
                 >
-                  AI Agent
+                  LeelE Agent Framework
                 </h1>
                 <div className="flex items-center space-x-2">
                   <button
@@ -178,11 +178,9 @@ export default function AgentClientPage() {
             <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 min-h-0">
               {/* Input Panel */}
               <div
-                className={`relative transition-all duration-500 rounded-2xl overflow-hidden ${
-                  theme === "dark"
-                    ? "bg-white/5 backdrop-blur-xl border border-white/10"
-                    : "bg-black/5 backdrop-blur-xl border border-black/5"
-                } ${isInputFocused ? "ring-2 ring-blue-500/30" : ""}`}
+                className={`relative transition-all duration-500 rounded-2xl overflow-hidden
+                  bg-secondary/50 dark:bg-secondary/20 border-border
+                  ${isInputFocused ? "ring-2 ring-primary/30" : ""}`}
               >
                 <div className="h-full flex flex-col p-4">
                   <div className="flex items-center justify-between mb-3 flex-shrink-0">
@@ -264,7 +262,7 @@ export default function AgentClientPage() {
 
               {/* Logs Panel */}
               <div className="relative flex flex-col min-h-0">
-                <LogsPanel logs={logs} setLogs={setLogs} theme={theme} />
+                <LogsPanel logs={logs} setLogs={setLogs} />
               </div>
             </div>
           </div>

@@ -1,51 +1,58 @@
+"use client";
+
 import React from "react";
+import { cn } from "@/lib/utils";
+import { Filter } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./select";
+
+interface FilterOption {
+  label: string;
+  value: string;
+}
 
 interface FilterButtonProps {
-  children: React.ReactNode;
-  onClick?: () => void;
-  isActive?: boolean;
-  theme: "light" | "dark";
-  count?: number;
+  options: FilterOption[];
+  value: string;
+  onChange: (value: string) => void;
+  className?: string;
 }
 
 export function FilterButton({
-  children,
-  onClick,
-  isActive = false,
-  theme,
-  count,
+  options,
+  value,
+  onChange,
+  className,
 }: FilterButtonProps) {
   return (
-    <button
-      onClick={onClick}
-      className={`px-2 py-1 rounded-lg text-[10px] font-medium transition-all duration-300 ${
-        isActive
-          ? theme === "dark"
-            ? "bg-white/10 text-white"
-            : "bg-black/10 text-black"
-          : theme === "dark"
-          ? "text-white/50 hover:text-white/70 hover:bg-white/5"
-          : "text-black/50 hover:text-black/70 hover:bg-black/5"
-      } transform hover:scale-[1.02] active:scale-[0.98]`}
-    >
-      <span className="flex items-center gap-1">
-        {children}
-        {count !== undefined && (
-          <span
-            className={`transition-colors duration-300 ${
-              isActive
-                ? theme === "dark"
-                  ? "text-white/50"
-                  : "text-black/50"
-                : theme === "dark"
-                ? "text-white/30"
-                : "text-black/30"
-            }`}
-          >
-            ({count})
-          </span>
+    <Select value={value} onValueChange={onChange}>
+      <SelectTrigger
+        className={cn(
+          "h-8 px-2 text-xs bg-transparent border-muted hover:bg-accent w-fit",
+          className
         )}
-      </span>
-    </button>
+      >
+        <div className="flex items-center gap-1.5">
+          <Filter className="h-3 w-3 text-muted-foreground" />
+          <SelectValue placeholder="Filter" className="text-muted-foreground" />
+        </div>
+      </SelectTrigger>
+      <SelectContent>
+        {options.map((option) => (
+          <SelectItem
+            key={option.value}
+            value={option.value}
+            className="text-xs"
+          >
+            {option.label}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
   );
 }
