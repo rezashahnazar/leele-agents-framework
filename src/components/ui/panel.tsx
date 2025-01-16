@@ -1,4 +1,4 @@
-import React from "react";
+import React, { forwardRef } from "react";
 import { cn } from "@/lib/utils";
 
 interface PanelProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -45,20 +45,19 @@ interface PanelContentProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
 }
 
-export function PanelContent({
-  children,
-  className,
-  ...props
-}: PanelContentProps) {
-  return (
-    <div
-      className={cn(
-        "flex-1 overflow-auto bg-background/50 rounded-b-2xl",
-        className
-      )}
-      {...props}
-    >
-      {children}
-    </div>
-  );
-}
+export const PanelContent = forwardRef<HTMLDivElement, PanelContentProps>(
+  ({ children, className, ...props }, ref) => {
+    return (
+      <div
+        ref={ref}
+        className={cn(
+          "flex-1 overflow-auto bg-background/50 rounded-b-2xl",
+          className
+        )}
+        {...props}
+      >
+        {children}
+      </div>
+    );
+  }
+);
