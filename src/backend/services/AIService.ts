@@ -22,7 +22,7 @@ export class AIService {
     try {
       console.log("Testing OpenAI connection...");
       const response = await openai.chat.completions.create({
-        model: "gpt-4",
+        model: "gpt-4o-mini",
         messages: [
           {
             role: "user",
@@ -43,7 +43,7 @@ export class AIService {
     console.log("Generating plan for input:", input);
     try {
       const response = await openai.chat.completions.create({
-        model: "gpt-4",
+        model: "gpt-4o-mini",
         messages: [
           {
             role: "system",
@@ -69,7 +69,7 @@ export class AIService {
     console.log("Generating response for input:", input);
     try {
       const response = await openai.chat.completions.create({
-        model: "gpt-4",
+        model: "gpt-4o-mini",
         messages: [
           {
             role: "system",
@@ -98,7 +98,7 @@ export class AIService {
     console.log("Generating refinement for response");
     try {
       const completion = await openai.chat.completions.create({
-        model: "gpt-4",
+        model: "gpt-4o-mini",
         messages: [
           {
             role: "system",

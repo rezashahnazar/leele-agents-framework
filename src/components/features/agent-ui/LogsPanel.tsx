@@ -9,13 +9,15 @@ import { FilterButton } from "@/components/ui/filter-button";
 import { Button } from "@/components/ui/button";
 import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { MessageSkeleton } from "@/components/ui/message-skeleton";
 
 interface LogsPanelProps {
   logs: Message[];
   setLogs: React.Dispatch<React.SetStateAction<Message[]>>;
+  isLoading?: boolean;
 }
 
-export function LogsPanel({ logs, setLogs }: LogsPanelProps) {
+export function LogsPanel({ logs, setLogs, isLoading }: LogsPanelProps) {
   const [filter, setFilter] = useState<string>("all");
   const [searchTerm, setSearchTerm] = useState("");
   const [expandedMessageId, setExpandedMessageId] = useState<number | null>(
@@ -152,6 +154,11 @@ export function LogsPanel({ logs, setLogs }: LogsPanelProps) {
                   </div>
                 </div>
               ))}
+              {isLoading && (
+                <div className="px-2">
+                  <MessageSkeleton />
+                </div>
+              )}
             </div>
           ) : (
             <div className="h-full flex items-center justify-center text-muted-foreground">

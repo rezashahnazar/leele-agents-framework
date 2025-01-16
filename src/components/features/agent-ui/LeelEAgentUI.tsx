@@ -49,7 +49,7 @@ export default function LeelEAgentUI({ className, apiUrl }: LeelEAgentUIProps) {
 
       <main className="flex-1 flex flex-col overflow-hidden">
         <div className="flex-1 overflow-hidden">
-          <LogsPanel logs={logs} setLogs={setLogs} />
+          <LogsPanel logs={logs} setLogs={setLogs} isLoading={isLoading} />
         </div>
 
         <PromptInput
