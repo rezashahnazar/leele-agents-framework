@@ -108,12 +108,14 @@ export function LogsPanel({ logs, setLogs }: LogsPanelProps) {
               onChange={setFilter}
             />
           </div>
-          <button
+          <Button
             onClick={handleClearLogs}
-            className="text-xs text-muted-foreground/60 hover:text-muted-foreground transition-colors"
+            variant="ghost"
+            size="sm"
+            className="text-muted-foreground hover:text-foreground"
           >
             Clear
-          </button>
+          </Button>
         </div>
       </PanelHeader>
       <PanelContent

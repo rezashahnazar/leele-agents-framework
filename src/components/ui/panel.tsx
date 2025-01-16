@@ -9,7 +9,7 @@ export function Panel({ children, className, ...props }: PanelProps) {
   return (
     <div
       className={cn(
-        "relative rounded-2xl flex flex-col min-h-0 bg-background/50 border border-border/50 shadow-sm overflow-hidden",
+        "relative rounded-b-2xl flex flex-col min-h-0 bg-background/50 border border-border/50 shadow-sm overflow-hidden",
         className
       )}
       {...props}
