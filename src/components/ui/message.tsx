@@ -61,16 +61,35 @@ export function Message({
 
       <div className={cn("flex-1 space-y-2", expanded && "expanded")}>
         <div className="flex items-center gap-2">
-          <span className="text-[10px] font-medium uppercase tracking-wider text-foreground/80">
+          <span
+            className={cn(
+              "text-[10px] font-medium uppercase tracking-wider",
+              type === "status" && "text-blue-600 dark:text-blue-400",
+              type === "plan" && "text-purple-600 dark:text-purple-400",
+              type === "result" && "text-green-600 dark:text-green-400",
+              type === "refinement" && "text-yellow-600 dark:text-yellow-400",
+              type === "error" && "text-red-600 dark:text-red-400"
+            )}
+          >
             {type}
           </span>
           {index !== undefined && total !== undefined && (
-            <span className="text-[10px] tabular-nums text-foreground/60">
+            <span
+              className={cn(
+                "text-[10px] tabular-nums",
+                type === "status" && "text-blue-500/70 dark:text-blue-400/70",
+                type === "plan" && "text-purple-500/70 dark:text-purple-400/70",
+                type === "result" && "text-green-500/70 dark:text-green-400/70",
+                type === "refinement" &&
+                  "text-yellow-500/70 dark:text-yellow-400/70",
+                type === "error" && "text-red-500/70 dark:text-red-400/70"
+              )}
+            >
               #{index + 1}/{total}
             </span>
           )}
           {timestamp && (
-            <span className="ml-auto text-[10px] tabular-nums text-foreground/60">
+            <span className="ml-auto text-[10px] tabular-nums text-foreground/30">
               {new Date(timestamp).toLocaleTimeString()}
             </span>
           )}
@@ -84,7 +103,7 @@ export function Message({
               title="Copy message"
             >
               <svg
-                className="w-3 h-3 opacity-50"
+                className="w-2.5 h-2.5 opacity-30 hover:opacity-50 transition-opacity"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -100,57 +119,48 @@ export function Message({
           )}
         </div>
 
-        <div className="prose prose-base dark:prose-invert max-w-none">
+        <div className="prose prose-sm dark:prose-invert max-w-none [&>*:first-child]:!mt-0 [&>*:last-child]:!mb-0">
           <ReactMarkdown
             remarkPlugins={[remarkGfm]}
             components={{
               p: ({ children }) => (
-                <p className="mb-4 last:mb-0 text-foreground/90 text-base leading-relaxed">
+                <p className="my-1.5 text-foreground/90 text-sm leading-relaxed">
                   {children}
                 </p>
               ),
               h1: ({ children }) => (
-                <h1 className="text-xl font-bold tracking-tight mt-6 mb-4 first:mt-0">
+                <h1 className="text-lg font-bold tracking-tight mt-3 mb-2 text-foreground">
                   {children}
                 </h1>
               ),
               h2: ({ children }) => (
-                <h2 className="text-lg font-semibold tracking-tight mt-6 mb-3">
+                <h2 className="text-base font-semibold tracking-tight mt-3 mb-1.5 text-foreground">
                   {children}
                 </h2>
               ),
               h3: ({ children }) => (
-                <h3 className="text-base font-semibold tracking-tight mt-5 mb-3">
+                <h3 className="text-sm font-semibold tracking-tight mt-2 mb-1.5 text-foreground">
                   {children}
                 </h3>
               ),
               ul: ({ children }) => (
-                <ul className="list-disc list-outside ml-5 mb-4 space-y-1.5">
+                <ul className="my-1.5 ml-1 list-disc [&>li]:mt-1 marker:text-foreground/50">
                   {children}
                 </ul>
               ),
               ol: ({ children }) => (
-                <ol className="list-decimal list-outside ml-5 mb-4 space-y-1.5">
+                <ol className="my-1.5 ml-1 list-decimal [&>li]:mt-1 marker:text-foreground/50">
                   {children}
                 </ol>
               ),
               li: ({ children }) => (
-                <li className="text-base leading-relaxed">{children}</li>
+                <li className="text-sm text-foreground/90 pl-1">{children}</li>
               ),
               blockquote: ({ children }) => (
-                <blockquote className="border-l-3 border-primary/30 pl-3 italic my-3 text-base">
+                <blockquote className="my-2 border-l-2 border-foreground/20 pl-1.5 italic text-foreground/80 text-sm">
                   {children}
                 </blockquote>
               ),
-              a: ({ children, href }) => (
-                <a href={href} className="text-primary hover:underline">
-                  {children}
-                </a>
-              ),
-              strong: ({ children }) => (
-                <strong className="font-semibold">{children}</strong>
-              ),
-              em: ({ children }) => <em className="italic">{children}</em>,
               code(props) {
                 const { className, children } = props;
                 const match = /language-(\w+)/.exec(className || "");
@@ -158,7 +168,7 @@ export function Message({
 
                 if (isInline) {
                   return (
-                    <code className="rounded-md bg-[#1e1e1e] px-1.5 py-0.5 font-mono text-sm text-zinc-200">
+                    <code className="rounded-md bg-primary/10 dark:bg-primary/20 px-1 py-0.5 font-mono text-xs text-primary dark:text-primary/90">
                       {children}
                     </code>
                   );
@@ -168,11 +178,27 @@ export function Message({
                 const code = String(children).replace(/\n$/, "");
 
                 return (
-                  <div className="my-4 first:mt-0 last:mb-0">
-                    <CodeBlock code={code} language={language} size="sm" />
+                  <div className="my-4 first:mt-0 last:mb-0 overflow-hidden rounded-lg border border-foreground/10">
+                    <CodeBlock code={code} language={language} size="lg" />
                   </div>
                 );
               },
+              strong: ({ children }) => (
+                <strong className="font-semibold text-foreground">
+                  {children}
+                </strong>
+              ),
+              em: ({ children }) => (
+                <em className="italic text-foreground/90">{children}</em>
+              ),
+              a: ({ children, href }) => (
+                <a
+                  href={href}
+                  className="font-medium text-primary underline underline-offset-2 hover:text-primary/80 transition-colors"
+                >
+                  {children}
+                </a>
+              ),
             }}
           >
             {message}

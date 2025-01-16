@@ -259,15 +259,17 @@ export default function AgentClientPage() {
                 >
                   {isLoading ? (
                     <div className="flex items-center gap-2">
-                      <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent opacity-70" />
-                      <span className="animate-pulse">Processing...</span>
+                      <div className="h-3.5 w-3.5 animate-spin rounded-full border-[1.5px] border-current border-t-transparent opacity-70" />
+                      <span className="text-xs animate-pulse">
+                        Processing...
+                      </span>
                     </div>
                   ) : (
                     <div className="flex items-center gap-2">
-                      <span>Ask AI</span>
+                      <span className="text-xs">Ask AI</span>
                       <svg
-                        width="16"
-                        height="16"
+                        width="14"
+                        height="14"
                         viewBox="0 0 16 16"
                         fill="none"
                         className={`transition-transform duration-200 ${
@@ -279,7 +281,7 @@ export default function AgentClientPage() {
                         <path
                           d="M1.5 8h13m0 0L8 1.5M14.5 8L8 14.5"
                           stroke="currentColor"
-                          strokeWidth="1.5"
+                          strokeWidth="1.25"
                           strokeLinecap="round"
                           strokeLinejoin="round"
                         />
