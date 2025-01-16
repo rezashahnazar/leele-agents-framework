@@ -17,10 +17,6 @@ export function MessageBox({
   isExpanded,
   onExpand,
 }: MessageBoxProps) {
-  const handleCopy = () => {
-    navigator.clipboard.writeText(message.message);
-  };
-
   return (
     <Message
       type={message.type}
@@ -30,7 +26,6 @@ export function MessageBox({
       total={totalMessages}
       expanded={isExpanded}
       onExpand={onExpand}
-      onCopy={handleCopy}
     />
   );
 }

@@ -10,7 +10,11 @@ export const metadata: Metadata = {
 const Home: FC = () => {
   return (
     <main className="min-h-screen w-full">
-      <LeelEAgentUI apiUrl="/api/agent" />
+      <LeelEAgentUI
+        apiUrl="/api/agent"
+        title="LeelE Agent"
+        description="The LeelE Agent is a powerful AI agent that can help you with a wide range of tasks!"
+      />
     </main>
   );
 };

@@ -3,9 +3,16 @@ import { ThemeToggle } from "@/components/ui/theme-toggle";
 interface HeaderProps {
   theme: "light" | "dark";
   onThemeToggle: () => void;
+  title?: string;
+  description?: string;
 }
 
-export function Header({ theme, onThemeToggle }: HeaderProps) {
+export function Header({
+  theme,
+  onThemeToggle,
+  title,
+  description,
+}: HeaderProps) {
   return (
     <header className="flex items-center justify-between px-4 py-3 shrink-0 bg-background/60 backdrop-blur-md">
       <div className="flex items-center gap-2">
@@ -14,10 +21,10 @@ export function Header({ theme, onThemeToggle }: HeaderProps) {
           <img src="/logo.svg" alt="LeelE" className="relative h-6 w-6" />
         </div>
         <div className="flex items-baseline space-x-2">
-          <h1 className="text-xl font-bold animate-title-gradient">LeelE</h1>
+          <h1 className="text-xl font-bold animate-title-gradient">{title}</h1>
           <div className="h-3 w-px bg-border/20" />
           <p className="text-sm font-medium text-muted-foreground/40 hidden sm:block">
-            INTELLIGENT AGENT FRAMEWORK
+            {description}
           </p>
         </div>
       </div>

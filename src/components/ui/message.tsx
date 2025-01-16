@@ -1,10 +1,14 @@
+"use client";
+
 import * as React from "react";
 import { cva } from "class-variance-authority";
 import { cn } from "@/lib/utils";
-import { Bot } from "lucide-react";
+import { Bot, Copy, Check } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { CodeBlock } from "./code-block/code-block";
+import { Button } from "@/components/ui/button";
+import { useState } from "react";
 
 const messageVariants = cva(
   "group relative flex gap-3 p-4 rounded-lg transition-all duration-150",
@@ -33,10 +37,9 @@ interface MessageProps {
   message: string;
   timestamp: number;
   index: number;
-  total: number;
+  total?: number;
   expanded?: boolean;
   onExpand?: () => void;
-  onCopy?: () => void;
 }
 
 export function Message({
@@ -47,11 +50,23 @@ export function Message({
   total,
   expanded,
   onExpand,
-  onCopy,
 }: MessageProps) {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    try {
+      await navigator.clipboard.writeText(message);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error("Failed to copy:", err);
+    }
+  };
+
   return (
     <div
-      className={cn(messageVariants({ type }), "cursor-pointer")}
+      className={cn(messageVariants({ type }), "cursor-pointer relative")}
       onClick={onExpand}
       role="button"
       tabIndex={0}
@@ -99,30 +114,6 @@ export function Message({
               {new Date(timestamp).toLocaleTimeString()}
             </span>
           )}
-          {onCopy && (
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                onCopy();
-              }}
-              className="p-1 hover:bg-white/10 rounded-md"
-              title="Copy message"
-            >
-              <svg
-                className="w-2.5 h-2.5 opacity-30 hover:opacity-50 transition-opacity"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
-                />
-              </svg>
-            </button>
-          )}
         </div>
 
         <div className="prose prose-sm dark:prose-invert max-w-none overflow-hidden [&>*:first-child]:!mt-0 [&>*:last-child]:!mb-0">
@@ -130,7 +121,7 @@ export function Message({
             remarkPlugins={[remarkGfm]}
             components={{
               p: ({ children }) => (
-                <p className="my-1.5 text-foreground/90 text-sm leading-relaxed">
+                <p className="my-1.5 text-foreground/90 font-normal text-sm leading-relaxed">
                   {children}
                 </p>
               ),
@@ -210,6 +201,21 @@ export function Message({
             {message}
           </ReactMarkdown>
         </div>
+
+        {type !== "status" && (
+          <Button
+            size="icon"
+            variant="ghost"
+            className="absolute bottom-2 right-2 h-6 w-6 bg-foreground/10 opacity-20 group-hover:opacity-100 transition-all duration-200"
+            onClick={handleCopy}
+          >
+            {copied ? (
+              <Check className="h-3 w-3" />
+            ) : (
+              <Copy className="h-3 w-3" />
+            )}
+          </Button>
+        )}
       </div>
     </div>
   );

@@ -10,7 +10,11 @@ export const metadata: Metadata = {
 const Home: FC = () => {
   return (
     <main className="min-h-screen w-full">
-      <LeelEAgentUI apiUrl="/api/smart-chef-awards" />
+      <LeelEAgentUI
+        apiUrl="/api/smart-chef-awards"
+        title="Smart Chef Awards"
+        description="Chefs guess a dish from a single ingredient of the dish you name!"
+      />
     </main>
   );
 };

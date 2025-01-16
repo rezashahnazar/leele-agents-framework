@@ -12,9 +12,16 @@ import { cn } from "@/lib/utils";
 interface LeelEAgentUIProps {
   className?: string;
   apiUrl?: string;
+  title?: string;
+  description?: string;
 }
 
-export default function LeelEAgentUI({ className, apiUrl }: LeelEAgentUIProps) {
+export default function LeelEAgentUI({
+  className,
+  apiUrl,
+  title,
+  description,
+}: LeelEAgentUIProps) {
   const { theme, toggleTheme } = useTheme();
   const {
     userPrompt,
@@ -41,11 +48,16 @@ export default function LeelEAgentUI({ className, apiUrl }: LeelEAgentUIProps) {
   return (
     <div
       className={cn(
-        "flex flex-col h-[100dvh] w-full overflow-hidden bg-background/40",
+        "flex flex-col h-dvh min-h-full w-full overflow-hidden bg-background/40",
         className
       )}
     >
-      <Header theme={theme} onThemeToggle={toggleTheme} />
+      <Header
+        theme={theme}
+        onThemeToggle={toggleTheme}
+        title={title}
+        description={description}
+      />
 
       <main className="flex-1 flex flex-col overflow-hidden">
         <div className="flex-1 overflow-hidden">
