@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
-import type { ThemeMode } from "@/types/message";
+import type { ThemeMode } from "@/types";
 
 interface ThemeContextType {
   theme: ThemeMode;
