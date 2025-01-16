@@ -6,7 +6,6 @@ import { Check, Copy } from "lucide-react";
 import { Button } from "../button/button";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { useTheme } from "next-themes";
-import { vs } from "react-syntax-highlighter/dist/cjs/styles/prism";
 import { vscDarkPlus } from "react-syntax-highlighter/dist/cjs/styles/prism";
 import { useToast } from "@/components/ui/use-toast";
 
@@ -96,7 +95,7 @@ export function CodeBlock({
       <div className="p-4">
         <SyntaxHighlighter
           language={language}
-          style={resolvedTheme === "dark" ? vscDarkPlus : vs}
+          style={vscDarkPlus}
           customStyle={{
             margin: 0,
             padding: 0,

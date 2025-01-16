@@ -1,9 +1,18 @@
-import LeelEAgentUI from "@/components/leele-agent-ui/LeelEAgentUI";
+import { type FC } from "react";
+import { type Metadata } from "next";
+import { LeelEAgentUI } from "@/components/features/agent-ui";
 
-export default function Home() {
+export const metadata: Metadata = {
+  title: "LeelE Agent",
+  description: "LeelE Agent Interface",
+};
+
+const Home: FC = () => {
   return (
-    <main>
+    <main className="min-h-screen w-full">
       <LeelEAgentUI />
     </main>
   );
-}
+};
+
+export default Home;

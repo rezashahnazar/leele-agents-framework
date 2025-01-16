@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState, useRef, useEffect } from "react";
 import { Message } from "@/app/types";
 import { Message as MessageComponent } from "@/components/ui/message";
