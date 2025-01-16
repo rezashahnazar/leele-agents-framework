@@ -11,7 +11,7 @@ export function useStreamResponse() {
     { onLog, onError }: StreamOptions
   ) => {
     try {
-      const response = await fetch("/api/agent", {
+      const response = await fetch("/api/smart-chef-awards", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ userPrompt }),
