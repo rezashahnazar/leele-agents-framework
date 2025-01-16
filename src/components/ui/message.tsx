@@ -11,19 +11,15 @@ import { Button } from "@/components/ui/button";
 import { useState } from "react";
 
 const messageVariants = cva(
-  "group relative flex gap-3 p-4 rounded-lg transition-all duration-150",
+  "group relative flex gap-3 p-4 rounded-lg transition-all duration-1000",
   {
     variants: {
       type: {
-        status:
-          "bg-blue-500/10 dark:bg-blue-500/20 text-blue-700 dark:text-blue-200 border border-blue-500/20 dark:border-blue-500/30",
-        plan: "bg-purple-500/10 dark:bg-purple-500/20 text-purple-700 dark:text-purple-200 border border-purple-500/20 dark:border-purple-500/30",
-        result:
-          "bg-green-500/10 dark:bg-green-500/20 text-green-700 dark:text-green-200 border border-green-500/20 dark:border-green-500/30",
-        refinement:
-          "bg-yellow-500/10 dark:bg-yellow-500/20 text-yellow-700 dark:text-yellow-200 border border-yellow-500/20 dark:border-yellow-500/30",
-        error:
-          "bg-red-500/10 dark:bg-red-500/20 text-red-700 dark:text-red-200 border border-red-500/20 dark:border-red-500/30",
+        status: "bg-blue-500/10 border border-blue-500/20",
+        plan: "bg-purple-500/10 border border-purple-500/20",
+        result: "bg-green-500/10 border border-green-500/20",
+        refinement: "bg-yellow-500/10 border border-yellow-500/20",
+        error: "bg-red-500/10 border border-red-500/20",
       },
     },
     defaultVariants: {
@@ -65,12 +61,7 @@ export function Message({
   };
 
   return (
-    <div
-      className={cn(messageVariants({ type }), "cursor-pointer relative")}
-      onClick={onExpand}
-      role="button"
-      tabIndex={0}
-    >
+    <div className={cn(messageVariants({ type }), "relative")}>
       <div className="flex h-6 w-6 items-center justify-center rounded-full bg-white/20 dark:bg-white/10">
         <Bot className="h-4 w-4" />
       </div>
