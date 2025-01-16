@@ -1,6 +1,6 @@
 import React from "react";
 import { Message as MessageType } from "@/app/types";
-import { Message } from "../ui/message";
+import { Message } from "@/components/ui/message";
 
 interface MessageBoxProps {
   message: MessageType;

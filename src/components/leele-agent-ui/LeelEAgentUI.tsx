@@ -1,10 +1,10 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";
-import { Message } from "../../app/types";
-import { LogsPanel } from "./LogsPanel";
+import { Message } from "@/app/types";
+import { LogsPanel } from "@/components/leele-agent-ui/LogsPanel";
 
-export default function AgentClientPage() {
+export default function LeelEAgentUI() {
   const [userPrompt, setUserPrompt] = useState("");
   const [logs, setLogs] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -195,8 +195,8 @@ export default function AgentClientPage() {
 
         {/* Input area */}
         <div className="w-full bg-background/95 backdrop-blur-lg">
-          <div className="p-4 max-w-screen-lg mx-auto">
-            <div className="flex gap-3 relative">
+          <div className="p-4 mx-auto">
+            <div className="flex gap-3 relative items-end">
               <div className="relative flex-1 group">
                 <div className="absolute -inset-0.5 bg-gradient-to-r from-primary/20 via-secondary/20 to-primary/20 rounded-xl blur opacity-50 group-hover:opacity-75 transition duration-1000"></div>
                 <div className="relative flex items-center bg-background/80 rounded-lg">

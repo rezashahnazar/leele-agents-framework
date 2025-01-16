@@ -4,7 +4,7 @@ import { Message as MessageComponent } from "@/components/ui/message";
 import { Panel, PanelHeader, PanelContent } from "@/components/ui/panel";
 import { SearchInput } from "@/components/ui/search-input";
 import { FilterButton } from "@/components/ui/filter-button";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 
