@@ -5,13 +5,13 @@ interface StreamOptions {
   onError: (error: string) => void;
 }
 
-export function useStreamResponse() {
+export function useStreamResponse(apiUrl?: string) {
   const streamResponse = async (
     userPrompt: string,
     { onLog, onError }: StreamOptions
   ) => {
     try {
-      const response = await fetch("/api/smart-chef-awards", {
+      const response = await fetch(apiUrl || "/api/agent", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ userPrompt }),

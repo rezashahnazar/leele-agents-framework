@@ -3,14 +3,14 @@ import { type Metadata } from "next";
 import { LeelEAgentUI } from "@/components/features/agent-ui";
 
 export const metadata: Metadata = {
-  title: "Simple Agent | LeelE Agent",
+  title: "Smart Chef Awards | LeelE Agent",
   description: "LeelE Agent Interface",
 };
 
 const Home: FC = () => {
   return (
     <main className="min-h-screen w-full">
-      <LeelEAgentUI apiUrl="/api/agent" />
+      <LeelEAgentUI apiUrl="/api/smart-chef-awards" />
     </main>
   );
 };

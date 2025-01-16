@@ -11,9 +11,10 @@ import { cn } from "@/lib/utils";
 
 interface LeelEAgentUIProps {
   className?: string;
+  apiUrl?: string;
 }
 
-export default function LeelEAgentUI({ className }: LeelEAgentUIProps) {
+export default function LeelEAgentUI({ className, apiUrl }: LeelEAgentUIProps) {
   const { theme, toggleTheme } = useTheme();
   const {
     userPrompt,
@@ -22,7 +23,7 @@ export default function LeelEAgentUI({ className }: LeelEAgentUIProps) {
     logs,
     setLogs,
     handleRunAgent,
-  } = useAgent();
+  } = useAgent(apiUrl);
 
   const handlePromptChange = useCallback(
     (value: string) => {

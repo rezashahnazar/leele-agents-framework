@@ -3,13 +3,13 @@ import { useStreamResponse } from "./useStreamResponse";
 import { useLogs } from "./useLogs";
 import { useTheme } from "./useTheme";
 
-export function useAgent() {
+export function useAgent(apiUrl?: string) {
   const [userPrompt, setUserPrompt] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   const { theme } = useTheme();
   const { logs, addLog, clearLogs, setLogs } = useLogs();
-  const { streamResponse } = useStreamResponse();
+  const { streamResponse } = useStreamResponse(apiUrl);
 
   const handleRunAgent = useCallback(async () => {
     if (!userPrompt.trim() || isLoading) return;
