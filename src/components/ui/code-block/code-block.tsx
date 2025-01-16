@@ -1,95 +1,115 @@
+"use client";
+
 import * as React from "react";
-import { cva } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 import { Check, Copy } from "lucide-react";
 import { Button } from "../button/button";
-import { PrismAsyncLight as SyntaxHighlighter } from "react-syntax-highlighter";
-import { oneDark } from "react-syntax-highlighter/dist/cjs/styles/prism";
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { useTheme } from "next-themes";
+import { vs } from "react-syntax-highlighter/dist/cjs/styles/prism";
+import { vscDarkPlus } from "react-syntax-highlighter/dist/cjs/styles/prism";
+import { useToast } from "@/components/ui/use-toast";
 
-const codeBlockVariants = cva(
-  "relative rounded-lg border border-border bg-zinc-900 overflow-hidden",
-  {
-    variants: {
-      size: {
-        sm: "text-[10px]",
-        default: "text-xs",
-        lg: "text-sm",
-      },
-    },
-    defaultVariants: {
-      size: "default",
-    },
-  }
-);
-
-export interface CodeBlockProps extends React.HTMLAttributes<HTMLDivElement> {
+interface CodeBlockProps extends React.HTMLAttributes<HTMLPreElement> {
   code: string;
   language?: string;
-  size?: "default" | "sm" | "lg";
 }
 
 export function CodeBlock({
   className,
   code,
   language = "typescript",
-  size = "default",
   ...props
 }: CodeBlockProps) {
   const [isCopied, setIsCopied] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(false);
+  const { resolvedTheme } = useTheme();
+  const { toast } = useToast();
 
-  const copyToClipboard = async () => {
-    await navigator.clipboard.writeText(code);
-    setIsCopied(true);
-    setTimeout(() => setIsCopied(false), 2000);
-  };
+  const copyToClipboard = React.useCallback(async () => {
+    if (isLoading || isCopied) return;
 
-  const cleanCode = code
-    .trim()
-    .replace(/^\s*[\r\n]/gm, "")
-    .replace(/[\r\n]\s*$/gm, "");
+    try {
+      setIsLoading(true);
+      await navigator.clipboard.writeText(code);
+      setIsCopied(true);
+      toast({
+        description: "Code copied to clipboard",
+        duration: 1500,
+      });
+    } catch (error) {
+      console.error("Failed to copy code:", error);
+      toast({
+        variant: "destructive",
+        description: "Failed to copy code",
+        duration: 2000,
+      });
+    } finally {
+      setIsLoading(false);
+      setTimeout(() => {
+        setIsCopied(false);
+      }, 1500);
+    }
+  }, [code, isLoading, isCopied, toast]);
 
   return (
-    <div className={cn(codeBlockVariants({ size, className }))} {...props}>
-      <div className="flex h-7 items-center justify-between border-b border-border px-2">
-        <span className="text-[10px] text-muted-foreground">{language}</span>
+    <div className={cn("overflow-hidden rounded-lg bg-zinc-950", className)}>
+      <div className="flex h-11 items-center justify-between border-b border-zinc-800/40 bg-zinc-900/80 px-4">
+        <span className="text-sm font-medium text-zinc-400 select-none">
+          {language}
+        </span>
         <Button
-          variant="secondary"
+          variant="ghost"
           size="sm"
-          className="h-4 px-1 text-[10px] bg-zinc-800 hover:bg-zinc-700 text-zinc-400 hover:text-zinc-200"
+          className={cn(
+            "h-8 px-3 transition-all duration-200",
+            isCopied && "text-green-500",
+            !isCopied && "text-zinc-400 hover:text-zinc-200"
+          )}
           onClick={copyToClipboard}
-          icon={
-            isCopied ? (
-              <Check className="h-2.5 w-2.5" />
-            ) : (
-              <Copy className="h-2.5 w-2.5" />
-            )
-          }
+          disabled={isLoading || isCopied}
+          title="Copy code"
         >
-          {isCopied ? "Copied" : ""}
+          <div className="flex items-center gap-2">
+            {isLoading ? (
+              <>
+                <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                <span className="text-xs">Copying...</span>
+              </>
+            ) : isCopied ? (
+              <>
+                <Check className="h-4 w-4" />
+                <span className="text-xs">Copied!</span>
+              </>
+            ) : (
+              <>
+                <Copy className="h-4 w-4" />
+                <span className="text-xs">Copy</span>
+              </>
+            )}
+          </div>
+          <span className="sr-only">
+            {isLoading ? "Copying..." : isCopied ? "Copied!" : "Copy code"}
+          </span>
         </Button>
       </div>
-      <SyntaxHighlighter
-        language={language}
-        style={oneDark}
-        showLineNumbers={false}
-        wrapLongLines
-        customStyle={{
-          margin: 0,
-          background: "transparent",
-          padding: "1rem",
-          fontSize: "inherit",
-        }}
-        codeTagProps={{
-          style: {
-            lineHeight: "1.25",
-            color: "var(--foreground)",
-          },
-        }}
-      >
-        {cleanCode}
-      </SyntaxHighlighter>
+      <div className="p-4">
+        <SyntaxHighlighter
+          language={language}
+          style={resolvedTheme === "dark" ? vscDarkPlus : vs}
+          customStyle={{
+            margin: 0,
+            padding: 0,
+            fontSize: "0.875rem",
+            lineHeight: "1.5",
+            background: "transparent",
+            fontFamily: "var(--font-mono)",
+          }}
+          wrapLongLines
+        >
+          {code.trim()}
+        </SyntaxHighlighter>
+      </div>
     </div>
   );
 }
-
-export { codeBlockVariants };

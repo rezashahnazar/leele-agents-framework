@@ -1,5 +1,5 @@
 import React from "react";
-import { useTheme } from "@/lib/theme-context";
+import { useTheme as useNextTheme } from "next-themes";
 
 export type IconSize = "xs" | "sm" | "base" | "lg";
 type IconVariant = "primary" | "secondary" | "ghost";
@@ -19,7 +19,8 @@ export function Icon({
   className = "",
   strokeWidth = 1.5,
 }: IconProps) {
-  const { colors } = useTheme();
+  const { resolvedTheme } = useNextTheme();
+  const isDark = resolvedTheme === "dark";
 
   const sizeStyles = {
     xs: "w-3 h-3",
@@ -29,9 +30,9 @@ export function Icon({
   };
 
   const variantStyles = {
-    primary: `text-${colors.text}`,
-    secondary: `text-${colors.text}/70`,
-    ghost: `text-${colors.text}/50`,
+    primary: `text-${isDark ? "white" : "black"}`,
+    secondary: `text-${isDark ? "white" : "black"}/70`,
+    ghost: `text-${isDark ? "white" : "black"}/50`,
   };
 
   return (

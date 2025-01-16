@@ -4,7 +4,7 @@ import { Message as MessageComponent } from "@/components/ui/message";
 import { Panel, PanelHeader, PanelContent } from "@/components/ui/panel";
 import { SearchInput } from "@/components/ui/search-input";
 import { FilterButton } from "@/components/ui/filter-button";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -108,14 +108,16 @@ export function LogsPanel({ logs, setLogs }: LogsPanelProps) {
               onChange={setFilter}
             />
           </div>
-          <Button
-            onClick={handleClearLogs}
-            variant="ghost"
-            size="sm"
-            className="text-muted-foreground hover:text-foreground"
-          >
-            Clear
-          </Button>
+          {logs.length > 0 && (
+            <Button
+              onClick={handleClearLogs}
+              variant="outline"
+              size="sm"
+              className="border-destructive text-destructive hover:bg-destructive/10 h-7"
+            >
+              Clear
+            </Button>
+          )}
         </div>
       </PanelHeader>
       <PanelContent

@@ -1,5 +1,4 @@
 import React from "react";
-import { useTheme } from "@/lib/theme-context";
 
 export type TextSize = "xs" | "sm" | "base" | "lg" | "xl" | "2xl";
 type TextWeight = "normal" | "medium" | "semibold" | "bold";
@@ -27,8 +26,6 @@ export function Text({
   monospace = false,
   truncate = false,
 }: TextProps) {
-  const { colors } = useTheme();
-
   const sizeStyles = {
     xs: "text-[10px] leading-[14px]",
     sm: "text-xs leading-4",
@@ -52,9 +49,9 @@ export function Text({
   };
 
   const variantStyles = {
-    primary: `text-${colors.text}`,
-    secondary: `text-${colors.text}/70`,
-    ghost: `text-${colors.text}/50`,
+    primary: "text-black dark:text-white",
+    secondary: "text-black/70 dark:text-white/70",
+    ghost: "text-black/50 dark:text-white/50",
   };
 
   return (

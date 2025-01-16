@@ -12,13 +12,14 @@ const messageVariants = cva(
     variants: {
       type: {
         status:
-          "bg-blue-500/5 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300",
-        plan: "bg-purple-500/5 dark:bg-purple-900/20 text-purple-700 dark:text-purple-300",
+          "bg-blue-500/10 dark:bg-blue-500/20 text-blue-700 dark:text-blue-200 border border-blue-500/20 dark:border-blue-500/30",
+        plan: "bg-purple-500/10 dark:bg-purple-500/20 text-purple-700 dark:text-purple-200 border border-purple-500/20 dark:border-purple-500/30",
         result:
-          "bg-green-500/5 dark:bg-green-900/20 text-green-700 dark:text-green-300",
+          "bg-green-500/10 dark:bg-green-500/20 text-green-700 dark:text-green-200 border border-green-500/20 dark:border-green-500/30",
         refinement:
-          "bg-yellow-500/5 dark:bg-yellow-900/20 text-yellow-700 dark:text-yellow-300",
-        error: "bg-red-500/5 dark:bg-red-900/20 text-red-700 dark:text-red-300",
+          "bg-yellow-500/10 dark:bg-yellow-500/20 text-yellow-700 dark:text-yellow-200 border border-yellow-500/20 dark:border-yellow-500/30",
+        error:
+          "bg-red-500/10 dark:bg-red-500/20 text-red-700 dark:text-red-200 border border-red-500/20 dark:border-red-500/30",
       },
     },
     defaultVariants: {
@@ -55,20 +56,25 @@ export function Message({
       role="button"
       tabIndex={0}
     >
-      <div className="flex h-6 w-6 items-center justify-center rounded-full bg-white/10">
+      <div className="flex h-6 w-6 items-center justify-center rounded-full bg-white/20 dark:bg-white/10">
         <Bot className="h-4 w-4" />
       </div>
 
-      <div className={cn("flex-1 space-y-2", expanded && "expanded")}>
+      <div
+        className={cn(
+          "flex-1 space-y-2 overflow-hidden",
+          expanded && "expanded"
+        )}
+      >
         <div className="flex items-center gap-2">
           <span
             className={cn(
               "text-[10px] font-medium uppercase tracking-wider",
-              type === "status" && "text-blue-600 dark:text-blue-400",
-              type === "plan" && "text-purple-600 dark:text-purple-400",
-              type === "result" && "text-green-600 dark:text-green-400",
-              type === "refinement" && "text-yellow-600 dark:text-yellow-400",
-              type === "error" && "text-red-600 dark:text-red-400"
+              type === "status" && "text-blue-700 dark:text-blue-300",
+              type === "plan" && "text-purple-700 dark:text-purple-300",
+              type === "result" && "text-green-700 dark:text-green-300",
+              type === "refinement" && "text-yellow-700 dark:text-yellow-300",
+              type === "error" && "text-red-700 dark:text-red-300"
             )}
           >
             {type}
@@ -77,12 +83,12 @@ export function Message({
             <span
               className={cn(
                 "text-[10px] tabular-nums",
-                type === "status" && "text-blue-500/70 dark:text-blue-400/70",
-                type === "plan" && "text-purple-500/70 dark:text-purple-400/70",
-                type === "result" && "text-green-500/70 dark:text-green-400/70",
+                type === "status" && "text-blue-600/80 dark:text-blue-300/80",
+                type === "plan" && "text-purple-600/80 dark:text-purple-300/80",
+                type === "result" && "text-green-600/80 dark:text-green-300/80",
                 type === "refinement" &&
-                  "text-yellow-500/70 dark:text-yellow-400/70",
-                type === "error" && "text-red-500/70 dark:text-red-400/70"
+                  "text-yellow-600/80 dark:text-yellow-300/80",
+                type === "error" && "text-red-600/80 dark:text-red-300/80"
               )}
             >
               #{index + 1}/{total}
@@ -119,7 +125,7 @@ export function Message({
           )}
         </div>
 
-        <div className="prose prose-sm dark:prose-invert max-w-none [&>*:first-child]:!mt-0 [&>*:last-child]:!mb-0">
+        <div className="prose prose-sm dark:prose-invert max-w-none overflow-hidden [&>*:first-child]:!mt-0 [&>*:last-child]:!mb-0">
           <ReactMarkdown
             remarkPlugins={[remarkGfm]}
             components={{
@@ -178,8 +184,8 @@ export function Message({
                 const code = String(children).replace(/\n$/, "");
 
                 return (
-                  <div className="my-4 first:mt-0 last:mb-0 overflow-hidden rounded-lg border border-foreground/10">
-                    <CodeBlock code={code} language={language} size="lg" />
+                  <div className="my-2 overflow-hidden rounded-lg border border-foreground/10">
+                    <CodeBlock code={code} language={language} />
                   </div>
                 );
               },
