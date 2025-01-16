@@ -18,17 +18,42 @@ export class AIService {
     throw new Error(`Failed to ${operation}: Unknown error occurred`);
   }
 
+  static async generate(
+    input: string,
+    systemPrompt: string,
+    userPrompt: string,
+    operation = "generate"
+  ): Promise<string> {
+    console.log(`${operation} for input:`, input);
+    try {
+      const response = await openai.chat.completions.create({
+        model: "gpt-4o-mini",
+        messages: [
+          {
+            role: "system",
+            content: systemPrompt,
+          },
+          {
+            role: "user",
+            content: userPrompt,
+          },
+        ],
+        temperature: 0.7,
+      });
+
+      console.log(`${operation} completed successfully`);
+      return response.choices[0].message.content || "";
+    } catch (error) {
+      return this.handleError(error, operation);
+    }
+  }
+
   static async testConnection(): Promise<boolean> {
     try {
       console.log("Testing OpenAI connection...");
       const response = await openai.chat.completions.create({
         model: "gpt-4o-mini",
-        messages: [
-          {
-            role: "user",
-            content: "Test connection",
-          },
-        ],
+        messages: [{ role: "user", content: "Test connection" }],
         max_tokens: 5,
       });
       console.log("OpenAI connection successful");
@@ -36,87 +61,6 @@ export class AIService {
     } catch (error) {
       console.error("OpenAI connection failed:", error);
       return false;
-    }
-  }
-
-  static async generatePlan(input: string): Promise<string> {
-    console.log("Generating plan for input:", input);
-    try {
-      const response = await openai.chat.completions.create({
-        model: "gpt-4o-mini",
-        messages: [
-          {
-            role: "system",
-            content:
-              "You are a planning agent. Break down the user request into clear, actionable steps.",
-          },
-          {
-            role: "user",
-            content: `Create a detailed plan to answer this question: "${input}"`,
-          },
-        ],
-        temperature: 0.7,
-      });
-
-      console.log("Plan generated successfully");
-      return response.choices[0].message.content || "";
-    } catch (error) {
-      return this.handleError(error, "generate plan");
-    }
-  }
-
-  static async generateResponse(input: string, plan: string): Promise<string> {
-    console.log("Generating response for input:", input);
-    try {
-      const response = await openai.chat.completions.create({
-        model: "gpt-4o-mini",
-        messages: [
-          {
-            role: "system",
-            content:
-              "You are a knowledgeable assistant. Provide detailed, accurate responses.",
-          },
-          {
-            role: "user",
-            content: `Question: "${input}"\nPlan: ${plan}\n\nProvide a comprehensive response following this plan.`,
-          },
-        ],
-        temperature: 0.7,
-      });
-
-      console.log("Response generated successfully");
-      return response.choices[0].message.content || "";
-    } catch (error) {
-      return this.handleError(error, "generate response");
-    }
-  }
-
-  static async generateRefinement(
-    input: string,
-    response: string
-  ): Promise<string> {
-    console.log("Generating refinement for response");
-    try {
-      const completion = await openai.chat.completions.create({
-        model: "gpt-4o-mini",
-        messages: [
-          {
-            role: "system",
-            content:
-              "You are a refinement agent. Analyze responses and suggest improvements.",
-          },
-          {
-            role: "user",
-            content: `Original question: "${input}"\nCurrent response: ${response}\n\nSuggest improvements and refinements.`,
-          },
-        ],
-        temperature: 0.7,
-      });
-
-      console.log("Refinement generated successfully");
-      return completion.choices[0].message.content || "";
-    } catch (error) {
-      return this.handleError(error, "generate refinement");
     }
   }
 }
