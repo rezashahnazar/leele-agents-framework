@@ -2,8 +2,12 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "LeelE Agent Framework",
-  description: "LeelE Agent Framework",
+  title: "LeelE | Intelligent Agent Framework",
+  description:
+    "A powerful framework for building, deploying, and managing intelligent AI agents with advanced capabilities and seamless integration",
+  icons: {
+    icon: [{ url: "/favicon.svg", type: "image/svg+xml" }],
+  },
 };
 
 export default function RootLayout({

@@ -122,83 +122,98 @@ export default function AgentClientPage() {
 
   return (
     <ThemeProvider theme={theme}>
-      <div className="min-h-screen transition-colors duration-500 bg-background">
-        <div className="relative h-screen overflow-hidden">
-          {/* Magical AI Background Effect */}
-          <div className="absolute inset-0 pointer-events-none">
-            <div
-              className="absolute inset-0 opacity-10 transition-opacity duration-500 dark:opacity-30"
-              style={{
-                background: `
-                  radial-gradient(circle at 0% 0%, hsl(var(--secondary)) 0%, transparent 50%),
-                  radial-gradient(circle at 100% 0%, hsl(var(--secondary)) 0%, transparent 50%),
-                  radial-gradient(circle at 50% 50%, hsl(var(--secondary)) 0%, transparent 50%),
-                  radial-gradient(circle at 0% 100%, hsl(var(--secondary)) 0%, transparent 50%),
-                  radial-gradient(circle at 100% 100%, hsl(var(--secondary)) 0%, transparent 50%)
-                `,
-              }}
-            >
-              <div className="absolute inset-0 animate-pulse-slow mix-blend-overlay opacity-50" />
+      <div className="flex flex-col h-[100dvh] w-full overflow-hidden bg-background/40">
+        {/* Header */}
+        <header className="flex items-center justify-between px-4 py-3 shrink-0 bg-background/60 backdrop-blur-md">
+          <div className="flex items-center gap-2">
+            <div className="relative group">
+              <div className="absolute -inset-1 bg-gradient-to-r from-primary/20 to-secondary/20 rounded-full blur opacity-75 group-hover:opacity-100 transition duration-1000"></div>
+              <img src="/logo.svg" alt="LeelE" className="relative h-6 w-6" />
+            </div>
+            <div className="flex items-baseline space-x-2">
+              <h1 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary via-secondary to-primary">
+                LeelE
+              </h1>
+              <div className="h-3 w-px bg-border/20" />
+              <p className="text-sm font-medium text-muted-foreground hidden sm:block">
+                INTELLIGENT AGENT FRAMEWORK
+              </p>
             </div>
           </div>
-
-          <div className="relative h-full p-4 md:p-6 flex flex-col">
-            {/* Header */}
-            <header className="flex items-center justify-between mb-6 flex-shrink-0">
-              <div className="flex items-center space-x-4">
-                <h1
-                  className={`text-xl md:text-2xl font-semibold bg-clip-text text-transparent bg-gradient-to-r transition-all duration-500 ${
-                    theme === "dark"
-                      ? "from-blue-400 to-purple-400"
-                      : "from-blue-500/80 to-purple-500/80"
-                  }`}
-                >
-                  LeelE Agent Framework
-                </h1>
-                <div className="flex items-center space-x-2">
-                  <button
-                    onClick={() =>
-                      setTheme((t) => (t === "light" ? "dark" : "light"))
-                    }
-                    className={`p-1.5 rounded-full transition-colors duration-300 ${
-                      theme === "dark"
-                        ? "hover:bg-white/10"
-                        : "hover:bg-black/5"
-                    }`}
-                    title="Toggle theme (⌘D)"
-                  >
-                    {theme === "light" ? "🌙" : "☀️"}
-                  </button>
-                </div>
-              </div>
-            </header>
-
-            {/* Main Content */}
-            <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 min-h-0">
-              {/* Input Panel */}
-              <div
-                className={`relative transition-all duration-500 rounded-2xl overflow-hidden
-                  bg-secondary/30 dark:bg-secondary/20 border-border
-                  ${isInputFocused ? "ring-2 ring-primary/20" : ""}`}
+          <button
+            onClick={() => setTheme(theme === "light" ? "dark" : "light")}
+            className="group relative inline-flex h-8 w-8 items-center justify-center rounded-md hover:bg-accent/50 transition-colors"
+            title={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
+          >
+            <div className="relative w-4 h-4">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className={`absolute inset-0 transition-all duration-500 ${
+                  theme === "light"
+                    ? "scale-100 rotate-0 opacity-100"
+                    : "scale-0 rotate-90 opacity-0"
+                }`}
               >
-                <div className="h-full flex flex-col p-4">
-                  <div className="flex items-center justify-between mb-3 flex-shrink-0">
-                    <label
-                      htmlFor="prompt"
-                      className={`text-xs font-medium transition-colors duration-300 ${
-                        theme === "dark" ? "text-white/70" : "text-black/70"
-                      }`}
-                    >
-                      Ask anything
-                    </label>
-                    <div className="text-[10px] opacity-50">⌘K to focus</div>
-                  </div>
-                  <div className="flex-1 flex flex-col min-h-0">
+                <circle cx="12" cy="12" r="4" />
+                <path d="M12 2v2" />
+                <path d="M12 20v2" />
+                <path d="m4.93 4.93 1.41 1.41" />
+                <path d="m17.66 17.66 1.41 1.41" />
+                <path d="M2 12h2" />
+                <path d="M20 12h2" />
+                <path d="m6.34 17.66-1.41 1.41" />
+                <path d="m19.07 4.93-1.41 1.41" />
+              </svg>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className={`absolute inset-0 transition-all duration-500 ${
+                  theme === "dark"
+                    ? "scale-100 rotate-0 opacity-100"
+                    : "scale-0 -rotate-90 opacity-0"
+                }`}
+              >
+                <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
+              </svg>
+            </div>
+            <span className="sr-only">Toggle theme</span>
+          </button>
+        </header>
+
+        {/* Main content */}
+        <main className="flex-1 flex flex-col overflow-hidden">
+          <div className="flex-1 overflow-hidden">
+            <LogsPanel logs={logs} setLogs={setLogs} />
+          </div>
+
+          {/* Input area */}
+          <div className="w-full bg-background/95 backdrop-blur-lg">
+            <div className="p-4 max-w-screen-lg mx-auto">
+              <div className="flex gap-3 relative">
+                <div className="relative flex-1 group">
+                  <div className="absolute -inset-0.5 bg-gradient-to-r from-primary/20 via-secondary/20 to-primary/20 rounded-xl blur opacity-50 group-hover:opacity-75 transition duration-1000"></div>
+                  <div className="relative flex items-center bg-background/80 rounded-lg">
                     <textarea
                       id="prompt"
-                      placeholder="How can I assist you today?"
                       value={userPrompt}
-                      onChange={(e) => setUserPrompt(e.target.value)}
+                      onChange={(e) => {
+                        const textarea = e.target;
+                        textarea.style.height = "auto";
+                        const newHeight = Math.min(textarea.scrollHeight, 200);
+                        textarea.style.height = `${newHeight}px`;
+                        setUserPrompt(e.target.value);
+                      }}
                       onFocus={() => setIsInputFocused(true)}
                       onBlur={() => setIsInputFocused(false)}
                       onKeyDown={(e) => {
@@ -207,65 +222,75 @@ export default function AgentClientPage() {
                           handleRunAgent();
                         }
                       }}
-                      className={`flex-1 p-3 rounded-xl resize-none font-mono text-xs transition-colors duration-300 ${
-                        theme === "dark"
-                          ? "bg-black/20 text-white/90 placeholder-white/30"
-                          : "bg-white/80 text-black/80 placeholder-black/40"
-                      } focus:outline-none`}
-                    />
-                  </div>
-                  <div className="flex-shrink-0">
-                    <button
-                      onClick={handleRunAgent}
-                      disabled={isLoading || !userPrompt.trim()}
-                      className={`mt-3 px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 ${
-                        isLoading || !userPrompt.trim()
-                          ? "opacity-50 cursor-not-allowed"
-                          : "hover:scale-[1.01] active:scale-[0.99]"
-                      } ${
-                        theme === "dark"
-                          ? "bg-white/10 hover:bg-white/15 text-white"
-                          : "bg-black/5 hover:bg-black/10 text-black/70"
+                      placeholder="How can I assist you today?"
+                      className={`w-full resize-none rounded-lg bg-transparent px-4 py-3 text-sm placeholder:text-muted-foreground/60 focus:outline-none min-h-[44px] overflow-y-hidden transition-opacity duration-200 ${
+                        isLoading
+                          ? "opacity-50 cursor-wait"
+                          : "hover:bg-accent/10 focus:bg-accent/10"
                       }`}
-                    >
-                      {isLoading ? (
-                        <span className="flex items-center justify-center">
-                          <svg
-                            className="animate-spin -ml-1 mr-2 h-4 w-4"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                          >
-                            <circle
-                              className="opacity-25"
-                              cx="12"
-                              cy="12"
-                              r="10"
-                              stroke="currentColor"
-                              strokeWidth="4"
-                            />
-                            <path
-                              className="opacity-75"
-                              fill="currentColor"
-                              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                            />
-                          </svg>
-                          Processing...
-                        </span>
-                      ) : (
-                        "Ask AI"
-                      )}
-                    </button>
+                      rows={1}
+                      autoComplete="off"
+                      spellCheck="false"
+                      disabled={isLoading}
+                    />
+                    {isInputFocused && !isLoading && (
+                      <div className="absolute right-3 bottom-3 flex items-center gap-2 text-xs text-muted-foreground/60">
+                        <kbd className="rounded bg-muted/50 px-1 py-0.5 text-[10px] font-medium">
+                          ⌘
+                        </kbd>
+                        <kbd className="rounded bg-muted/50 px-1 py-0.5 text-[10px] font-medium">
+                          ↵
+                        </kbd>
+                        <span className="mx-1">to send</span>
+                      </div>
+                    )}
                   </div>
                 </div>
-              </div>
-
-              {/* Logs Panel */}
-              <div className="relative flex flex-col min-h-0">
-                <LogsPanel logs={logs} setLogs={setLogs} />
+                <button
+                  onClick={handleRunAgent}
+                  disabled={isLoading || !userPrompt.trim()}
+                  className={`shrink-0 h-[44px] px-4 rounded-lg inline-flex items-center justify-center font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary ${
+                    isLoading
+                      ? "bg-primary/70 text-primary-foreground/70 cursor-wait"
+                      : userPrompt.trim()
+                      ? "bg-primary/90 text-primary-foreground hover:bg-primary"
+                      : "bg-primary/50 text-primary-foreground/50 cursor-not-allowed"
+                  }`}
+                >
+                  {isLoading ? (
+                    <div className="flex items-center gap-2">
+                      <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent opacity-70" />
+                      <span className="animate-pulse">Processing...</span>
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-2">
+                      <span>Ask AI</span>
+                      <svg
+                        width="16"
+                        height="16"
+                        viewBox="0 0 16 16"
+                        fill="none"
+                        className={`transition-transform duration-200 ${
+                          userPrompt.trim()
+                            ? "translate-x-0 opacity-100"
+                            : "-translate-x-1 opacity-0"
+                        }`}
+                      >
+                        <path
+                          d="M1.5 8h13m0 0L8 1.5M14.5 8L8 14.5"
+                          stroke="currentColor"
+                          strokeWidth="1.5"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                    </div>
+                  )}
+                </button>
               </div>
             </div>
           </div>
-        </div>
+        </main>
       </div>
     </ThemeProvider>
   );

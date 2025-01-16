@@ -47,61 +47,59 @@ export function LogsPanel({ logs, setLogs }: LogsPanelProps) {
   }, {} as Record<string, Message[]>);
 
   return (
-    <Panel>
-      <PanelHeader>
-        <div className="flex items-center justify-between">
-          <div className="flex items-center justify-between w-full gap-2">
+    <Panel className="h-full flex flex-col">
+      <PanelHeader className="shrink-0 bg-background/60 backdrop-blur-md">
+        <div className="flex items-center justify-between w-full gap-2">
+          <div className="flex items-center gap-2">
             <SearchInput
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               onClear={handleClear}
-              placeholder="Search logs..."
-              className="min-w-[240px]"
+              placeholder="Search messages..."
+              className="w-[200px]"
             />
-            <div className="flex items-center gap-2">
-              <button
-                onClick={handleClearLogs}
-                className="px-2 py-1 text-xs rounded-md bg-red-500/10 text-red-500 hover:bg-red-500/20"
-              >
-                Clear All
-              </button>
-              <FilterButton
-                options={[
-                  { label: "All Messages", value: "all" },
-                  { label: "Status Updates", value: "status" },
-                  { label: "Action Plans", value: "plan" },
-                  { label: "Results", value: "result" },
-                  { label: "Refinements", value: "refinement" },
-                  { label: "Errors", value: "error" },
-                ]}
-                value={filter}
-                onChange={setFilter}
-              />
-            </div>
+            <FilterButton
+              options={[
+                { label: "All", value: "all" },
+                { label: "Status", value: "status" },
+                { label: "Plan", value: "plan" },
+                { label: "Result", value: "result" },
+                { label: "Refine", value: "refinement" },
+                { label: "Error", value: "error" },
+              ]}
+              value={filter}
+              onChange={setFilter}
+            />
           </div>
+          <button
+            onClick={handleClearLogs}
+            className="text-xs text-muted-foreground/60 hover:text-muted-foreground transition-colors"
+          >
+            Clear
+          </button>
         </div>
       </PanelHeader>
-      <PanelContent>
+      <PanelContent className="flex-1 overflow-y-auto bg-transparent">
         {Object.entries(groupedLogs).length > 0 ? (
-          <div className="space-y-6">
+          <div className="space-y-4 pb-2">
             {Object.entries(groupedLogs).map(([date, messages]) => (
               <div key={date}>
-                <h3 className="sticky top-0 z-10 px-4 py-2 text-[10px] font-medium uppercase tracking-wider text-muted-foreground flex items-center gap-2 bg-background/80 backdrop-blur-sm">
-                  <span className="h-px flex-1 bg-border/50" />
+                <h3 className="sticky top-0 z-10 px-3 py-1.5 text-[10px] font-medium uppercase tracking-wider text-muted-foreground/60 flex items-center gap-2 bg-background/80 backdrop-blur-lg">
+                  <span className="h-px flex-1 bg-border/20" />
                   <span className="shrink-0">{date}</span>
-                  <span className="h-px flex-1 bg-border/50" />
+                  <span className="h-px flex-1 bg-border/20" />
                 </h3>
-                <div className="space-y-2 px-2 pb-2">
+                <div className="space-y-2 px-2">
                   {messages.map((message, index) => (
                     <MessageComponent
                       key={index}
                       type={message.type}
                       message={message.message}
                       timestamp={message.timestamp.getTime()}
-                      index={index}
-                      total={messages.length}
                       expanded={expandedMessageId === index}
                       onExpand={() => handleExpand(index)}
+                      index={index}
+                      total={messages.length}
                     />
                   ))}
                 </div>
@@ -109,15 +107,8 @@ export function LogsPanel({ logs, setLogs }: LogsPanelProps) {
             ))}
           </div>
         ) : (
-          <div className="flex flex-col items-center justify-center h-full p-8 text-center">
-            <p className="text-sm text-gray-500 dark:text-gray-400">
-              {logs.length === 0 ? "No messages yet" : "No matching results"}
-            </p>
-            <p className="mt-1 text-xs text-gray-400 dark:text-gray-500">
-              {logs.length === 0
-                ? "Start by sending a prompt to the agent"
-                : "Try adjusting your search or filters"}
-            </p>
+          <div className="h-full flex items-center justify-center text-muted-foreground">
+            <p className="text-sm">No messages yet</p>
           </div>
         )}
       </PanelContent>

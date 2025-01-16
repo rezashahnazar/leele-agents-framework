@@ -1,0 +1,16 @@
+<svg width="32" height="32" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Neural network nodes -->
+  <circle cx="256" cy="96" r="32" fill="#2563eb"/>
+  <circle cx="128" cy="256" r="32" fill="#2563eb"/>
+  <circle cx="384" cy="256" r="32" fill="#2563eb"/>
+  <circle cx="192" cy="416" r="32" fill="#2563eb"/>
+  <circle cx="320" cy="416" r="32" fill="#2563eb"/>
+  
+  <!-- Neural connections -->
+  <path d="M256 96 L128 256 M256 96 L384 256 M128 256 L192 416 M128 256 L320 416 M384 256 L192 416 M384 256 L320 416" 
+        stroke="#2563eb" stroke-width="16"/>
+  
+  <!-- Hexagonal frame -->
+  <path d="M256 32 L448 160 L448 352 L256 480 L64 352 L64 160 Z" 
+        stroke="#2563eb" stroke-width="24" fill="none"/>
+</svg> 

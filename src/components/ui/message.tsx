@@ -100,13 +100,57 @@ export function Message({
           )}
         </div>
 
-        <div className="prose prose-sm dark:prose-invert max-w-none">
+        <div className="prose prose-base dark:prose-invert max-w-none">
           <ReactMarkdown
             remarkPlugins={[remarkGfm]}
             components={{
               p: ({ children }) => (
-                <p className="mb-4 last:mb-0 text-foreground/90">{children}</p>
+                <p className="mb-4 last:mb-0 text-foreground/90 text-base leading-relaxed">
+                  {children}
+                </p>
               ),
+              h1: ({ children }) => (
+                <h1 className="text-xl font-bold tracking-tight mt-6 mb-4 first:mt-0">
+                  {children}
+                </h1>
+              ),
+              h2: ({ children }) => (
+                <h2 className="text-lg font-semibold tracking-tight mt-6 mb-3">
+                  {children}
+                </h2>
+              ),
+              h3: ({ children }) => (
+                <h3 className="text-base font-semibold tracking-tight mt-5 mb-3">
+                  {children}
+                </h3>
+              ),
+              ul: ({ children }) => (
+                <ul className="list-disc list-outside ml-5 mb-4 space-y-1.5">
+                  {children}
+                </ul>
+              ),
+              ol: ({ children }) => (
+                <ol className="list-decimal list-outside ml-5 mb-4 space-y-1.5">
+                  {children}
+                </ol>
+              ),
+              li: ({ children }) => (
+                <li className="text-base leading-relaxed">{children}</li>
+              ),
+              blockquote: ({ children }) => (
+                <blockquote className="border-l-3 border-primary/30 pl-3 italic my-3 text-base">
+                  {children}
+                </blockquote>
+              ),
+              a: ({ children, href }) => (
+                <a href={href} className="text-primary hover:underline">
+                  {children}
+                </a>
+              ),
+              strong: ({ children }) => (
+                <strong className="font-semibold">{children}</strong>
+              ),
+              em: ({ children }) => <em className="italic">{children}</em>,
               code(props) {
                 const { className, children } = props;
                 const match = /language-(\w+)/.exec(className || "");
@@ -114,7 +158,7 @@ export function Message({
 
                 if (isInline) {
                   return (
-                    <code className="rounded-md bg-[#1e1e1e] px-1.5 py-0.5 font-mono text-zinc-200">
+                    <code className="rounded-md bg-[#1e1e1e] px-1.5 py-0.5 font-mono text-sm text-zinc-200">
                       {children}
                     </code>
                   );

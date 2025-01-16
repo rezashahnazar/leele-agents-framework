@@ -1,0 +1,40 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Neural network nodes -->
+  <circle cx="256" cy="96" r="24" fill="#2563eb"/>
+  <circle cx="128" cy="256" r="24" fill="#2563eb"/>
+  <circle cx="384" cy="256" r="24" fill="#2563eb"/>
+  <circle cx="192" cy="416" r="24" fill="#2563eb"/>
+  <circle cx="320" cy="416" r="24" fill="#2563eb"/>
+  
+  <!-- Neural connections -->
+  <path d="M256 96 L128 256" stroke="#2563eb" stroke-width="8"/>
+  <path d="M256 96 L384 256" stroke="#2563eb" stroke-width="8"/>
+  <path d="M128 256 L192 416" stroke="#2563eb" stroke-width="8"/>
+  <path d="M128 256 L320 416" stroke="#2563eb" stroke-width="8"/>
+  <path d="M384 256 L192 416" stroke="#2563eb" stroke-width="8"/>
+  <path d="M384 256 L320 416" stroke="#2563eb" stroke-width="8"/>
+  
+  <!-- Hexagonal frame -->
+  <path d="M256 32 L448 160 L448 352 L256 480 L64 352 L64 160 Z" 
+        stroke="#2563eb" stroke-width="16" fill="none"/>
+  
+  <!-- Pulse animations -->
+  <circle cx="256" cy="96" r="32" stroke="#2563eb" stroke-width="4" fill="none">
+    <animate attributeName="r" values="32;40;32" dur="2s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="1;0;1" dur="2s" repeatCount="indefinite"/>
+  </circle>
+  
+  <!-- Data flow animations -->
+  <circle cx="0" cy="0" r="4" fill="#2563eb">
+    <animateMotion 
+      path="M256 96 L128 256" 
+      dur="1.5s" 
+      repeatCount="indefinite"/>
+  </circle>
+  <circle cx="0" cy="0" r="4" fill="#2563eb">
+    <animateMotion 
+      path="M256 96 L384 256" 
+      dur="1.5s" 
+      repeatCount="indefinite"/>
+  </circle>
+</svg> 
