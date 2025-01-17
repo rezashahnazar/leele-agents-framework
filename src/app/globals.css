@@ -1,68 +1,132 @@
+@import url("https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100;200;300;400;500;600;700;800;900&display=swap");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    --background: 0 0% 99%;
-    --foreground: 222.2 84% 4.9%;
+    --background: 0 0% 98%;
+    --foreground: 240 10% 3.9%;
 
-    --card: 0 0% 99%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card: 0 0% 98%;
+    --card-foreground: 240 10% 3.9%;
 
-    --popover: 0 0% 99%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 98%;
+    --popover-foreground: 240 10% 3.9%;
 
-    --primary: 221.2 83% 53%;
-    --primary-foreground: 210 40% 98%;
+    /* Vibrant primary color - Persian Blue */
+    --primary: 240 5.9% 10%;
+    --primary-foreground: 0 0% 98%;
 
-    --secondary: 217.2 32% 17%;
-    --secondary-foreground: 210 40% 98%;
+    /* Soft secondary color */
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    /* Muted variant of primary */
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
 
-    --accent: 217.2 32% 18%;
-    --accent-foreground: 210 40% 98%;
+    /* Accent color - A softer blue */
+    --accent: 240 4.8% 95.9%;
+    --accent-foreground: 240 5.9% 10%;
 
+    /* Destructive red */
     --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive-foreground: 0 0% 98%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 221.2 83% 53%;
+    /* Subtle borders */
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 240 5.9% 10%;
+
+    /* Status Message Colors - Professional Blue */
+    --status-bg: 213 60% 98%;
+    --status-border: 213 60% 92%;
+    --status-fg: 213 60% 40%;
+
+    /* Plan Message Colors - Royal Purple */
+    --plan-bg: 265 40% 98%;
+    --plan-border: 265 40% 92%;
+    --plan-fg: 265 40% 45%;
+
+    /* Result Message Colors - Forest Green */
+    --result-bg: 145 45% 98%;
+    --result-border: 145 45% 92%;
+    --result-fg: 145 45% 35%;
+
+    /* Refinement Message Colors - Amber */
+    --refinement-bg: 38 45% 98%;
+    --refinement-border: 38 45% 92%;
+    --refinement-fg: 38 45% 35%;
+
+    /* Error Message Colors - Ruby Red */
+    --error-bg: 355 65% 98%;
+    --error-border: 355 65% 92%;
+    --error-fg: 355 65% 40%;
 
     --radius: 0.5rem;
   }
 
   .dark {
-    --background: 220 10% 8%;
-    --foreground: 220 10% 98%;
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
 
-    --card: 220 10% 9%;
-    --card-foreground: 220 10% 98%;
+    --card: 240 10% 3.9%;
+    --card-foreground: 0 0% 98%;
 
-    --popover: 220 10% 9%;
-    --popover-foreground: 220 10% 98%;
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
 
-    --primary: 220 90% 65%;
-    --primary-foreground: 220 10% 100%;
+    /* Vibrant primary color in dark mode */
+    --primary: 0 0% 98%;
+    --primary-foreground: 240 5.9% 10%;
 
-    --secondary: 220 10% 13%;
-    --secondary-foreground: 220 10% 98%;
+    /* Darker secondary */
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
 
-    --muted: 220 10% 13%;
-    --muted-foreground: 220 10% 65%;
+    /* Darker muted */
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
 
-    --accent: 220 10% 13%;
-    --accent-foreground: 220 10% 98%;
+    /* Darker accent */
+    --accent: 240 3.7% 15.9%;
+    --accent-foreground: 0 0% 98%;
 
+    /* Darker destructive */
     --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 220 10% 98%;
+    --destructive-foreground: 0 0% 98%;
 
-    --border: 220 10% 13%;
-    --input: 220 10% 13%;
-    --ring: 220 90% 65%;
+    /* Darker borders */
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 240 4.9% 83.9%;
+
+    /* Status Message Colors - Professional Blue */
+    --status-bg: 213 60% 12%;
+    --status-border: 213 60% 20%;
+    --status-fg: 213 60% 85%;
+
+    /* Plan Message Colors - Royal Purple */
+    --plan-bg: 265 40% 12%;
+    --plan-border: 265 40% 20%;
+    --plan-fg: 265 40% 85%;
+
+    /* Result Message Colors - Forest Green */
+    --result-bg: 145 45% 12%;
+    --result-border: 145 45% 20%;
+    --result-fg: 145 45% 85%;
+
+    /* Refinement Message Colors - Amber */
+    --refinement-bg: 38 45% 12%;
+    --refinement-border: 38 45% 20%;
+    --refinement-fg: 38 45% 85%;
+
+    /* Error Message Colors - Ruby Red */
+    --error-bg: 355 65% 12%;
+    --error-border: 355 65% 20%;
+    --error-fg: 355 65% 85%;
   }
 }
 
@@ -207,4 +271,9 @@ html {
   100% {
     background-position: 0% 50%;
   }
+}
+
+/* RTL Support */
+[dir="rtl"] {
+  text-align: right;
 }

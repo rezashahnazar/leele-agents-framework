@@ -8,7 +8,7 @@ export function useAgent(apiUrl?: string) {
   const [isLoading, setIsLoading] = useState(false);
 
   const { theme } = useTheme();
-  const { logs, addLog, clearLogs, setLogs } = useLogs();
+  const { logs, addLog, appendChunk, clearLogs, setLogs } = useLogs();
   const { streamResponse } = useStreamResponse(apiUrl);
 
   const handleRunAgent = useCallback(async () => {
@@ -20,6 +20,7 @@ export function useAgent(apiUrl?: string) {
 
       await streamResponse(userPrompt, {
         onLog: (log) => addLog({ ...log, theme }),
+        onChunk: (chunk) => appendChunk(chunk),
         onError: (message) =>
           addLog({
             id: crypto.randomUUID(),
@@ -39,7 +40,15 @@ export function useAgent(apiUrl?: string) {
     } finally {
       setIsLoading(false);
     }
-  }, [userPrompt, isLoading, theme, clearLogs, addLog, streamResponse]);
+  }, [
+    userPrompt,
+    isLoading,
+    theme,
+    clearLogs,
+    addLog,
+    appendChunk,
+    streamResponse,
+  ]);
 
   return {
     userPrompt,

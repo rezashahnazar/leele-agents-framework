@@ -22,9 +22,20 @@ export class AIService {
     input: string,
     systemPrompt: string,
     userPrompt: string,
-    operation = "generate"
+    operation = "generate",
+    stream = false,
+    onChunk?: (chunk: string) => Promise<void>
   ): Promise<string> {
-    console.log(`${operation} for input:`, input);
+    if (stream && onChunk) {
+      return this.generateStream(
+        input,
+        systemPrompt,
+        userPrompt,
+        operation,
+        onChunk
+      );
+    }
+
     try {
       const response = await openai.chat.completions.create({
         model: "gpt-4o-mini",
@@ -39,12 +50,104 @@ export class AIService {
           },
         ],
         temperature: 0.7,
+        stream: false,
       });
-
-      console.log(`${operation} completed successfully`);
       return response.choices[0].message.content || "";
     } catch (error) {
       return this.handleError(error, operation);
+    }
+  }
+
+  static async generateStream(
+    input: string,
+    systemPrompt: string,
+    userPrompt: string,
+    type: string,
+    onChunk: (chunk: string) => Promise<void>
+  ): Promise<string> {
+    try {
+      const response = await fetch(
+        `${process.env.OPENAI_BASE_URL}/chat/completions`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+          },
+          body: JSON.stringify({
+            model: "gpt-4o-mini",
+            messages: [
+              {
+                role: "system",
+                content: systemPrompt,
+              },
+              {
+                role: "user",
+                content: userPrompt,
+              },
+            ],
+            temperature: 0.7,
+            stream: true,
+          }),
+        }
+      );
+
+      if (!response.body) {
+        throw new Error("No response body");
+      }
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let fullResponse = "";
+      let pendingChunk = "";
+
+      const processChunk = (text: string) => {
+        const dataPrefix = "data: ";
+        const start = text.indexOf(dataPrefix);
+        if (start === -1) return;
+
+        const jsonStr = text.slice(start + dataPrefix.length);
+        if (jsonStr.includes("[DONE]")) return;
+
+        try {
+          const parsed = JSON.parse(jsonStr);
+          const content = parsed.choices?.[0]?.delta?.content;
+          if (content) {
+            fullResponse += content;
+            // Fire and forget
+            onChunk(content).catch(console.error);
+          }
+        } catch (e) {
+          // Ignore parse errors
+        }
+      };
+
+      while (true) {
+        const { value, done } = await reader.read();
+        if (done) break;
+
+        const chunk = pendingChunk + decoder.decode(value, { stream: true });
+        const newlineIndex = chunk.lastIndexOf("\n");
+
+        if (newlineIndex !== -1) {
+          const completeChunks = chunk.slice(0, newlineIndex);
+          pendingChunk = chunk.slice(newlineIndex + 1);
+
+          // Process each complete line
+          completeChunks.split("\n").forEach(processChunk);
+        } else {
+          pendingChunk = chunk;
+        }
+      }
+
+      // Process any remaining chunk
+      if (pendingChunk) {
+        processChunk(pendingChunk);
+      }
+
+      return fullResponse;
+    } catch (error) {
+      return this.handleError(error, "stream generation");
     }
   }
 

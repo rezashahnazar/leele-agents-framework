@@ -1,10 +1,8 @@
 import {
   AnyFlowStep,
   Flow,
-  FlowStep,
-  ParallelStep,
-  ConditionalStep,
-  GoalBasedStep,
+  FlowExecuteFunction,
+  FlowContext,
 } from "../types/flow";
 
 export class FlowBuilder {
@@ -23,20 +21,22 @@ export class FlowBuilder {
     return this;
   }
 
-  addStep(step: FlowStep): FlowBuilder {
-    this.steps.push({ ...step, type: "sequential" });
+  addStep(
+    step: Omit<AnyFlowStep, "type"> & { type: "sequential" }
+  ): FlowBuilder {
+    this.steps.push(step);
     return this;
   }
 
   parallel(
     name: string,
     description: string,
-    execute: (input: any) => Promise<any>,
+    execute: FlowExecuteFunction,
     items: (outputs: any[]) => any[],
     statusMessage?: string,
-    outputProcessor?: (output: any) => string
+    outputProcessor?: (output: any) => any
   ): FlowBuilder {
-    const step: ParallelStep = {
+    const step: AnyFlowStep = {
       name,
       description,
       execute,
@@ -49,51 +49,21 @@ export class FlowBuilder {
     return this;
   }
 
-  conditional(
-    name: string,
-    description: string,
-    condition: (input: any) => Promise<boolean>,
-    onTrue: FlowStep[],
-    onFalse: FlowStep[],
-    statusMessage?: string
-  ): FlowBuilder {
-    const step: ConditionalStep = {
-      name,
-      description,
-      execute: async (input: any) => {
-        const result = await condition(input);
-        const steps = result ? onTrue : onFalse;
-        let lastOutput = input;
-        for (const step of steps) {
-          lastOutput = await step.execute(lastOutput);
-        }
-        return lastOutput;
-      },
-      type: "conditional",
-      condition,
-      onTrue,
-      onFalse,
-      statusMessage,
-    };
-    this.steps.push(step);
-    return this;
-  }
-
   goalBased(
     name: string,
     description: string,
-    execute: (input: any) => Promise<any>,
-    goalCheck: (result: any) => Promise<boolean>,
+    execute: FlowExecuteFunction,
+    evaluator: (result: any, context: FlowContext) => Promise<boolean>,
     maxAttempts: number,
     statusMessage?: string,
-    outputProcessor?: (output: any) => string
+    outputProcessor?: (output: any) => any
   ): FlowBuilder {
-    const step: GoalBasedStep = {
+    const step: AnyFlowStep = {
       name,
       description,
       execute,
       type: "goal-based",
-      goalCheck,
+      evaluator,
       maxAttempts,
       statusMessage,
       outputProcessor,

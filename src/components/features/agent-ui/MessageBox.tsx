@@ -8,6 +8,7 @@ interface MessageBoxProps {
   totalMessages: number;
   isExpanded: boolean;
   onExpand: () => void;
+  isStreaming?: boolean;
 }
 
 export function MessageBox({
@@ -16,6 +17,7 @@ export function MessageBox({
   totalMessages,
   isExpanded,
   onExpand,
+  isStreaming,
 }: MessageBoxProps) {
   return (
     <Message
@@ -26,6 +28,7 @@ export function MessageBox({
       total={totalMessages}
       expanded={isExpanded}
       onExpand={onExpand}
+      isStreaming={isStreaming}
     />
   );
 }

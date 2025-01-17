@@ -4,8 +4,10 @@ import {
   AgentConfig,
   AgentEnvironment,
   AgentMessage,
+  AgentMessageType,
   AgentPolicy,
 } from "../types/agent";
+import { nanoid } from "nanoid";
 
 export class ConversationalAgent extends BaseAgent {
   private writer: WritableStreamDefaultWriter;
@@ -22,11 +24,39 @@ export class ConversationalAgent extends BaseAgent {
 
   protected async streamResponse(message: string): Promise<void> {
     const encoder = new TextEncoder();
-    await this.writer.write(encoder.encode(message));
+    const data = encoder.encode(message);
+    // Fire and forget but return a resolved promise for compatibility
+    this.writer.write(data).catch(console.error);
+    return Promise.resolve();
   }
 
   async processMessage(message: AgentMessage): Promise<void> {
-    await this.sendMessage(message);
+    if (!message.messageId) {
+      throw new Error("Message ID is required");
+    }
+    const data = JSON.stringify({
+      type: message.type,
+      message: message.message,
+      messageId: message.messageId,
+    });
+    // Fire and forget but return a resolved promise for compatibility
+    this.streamResponse(`data: ${data}\n\n`).catch(console.error);
+    return Promise.resolve();
+  }
+
+  private async streamChunk(
+    chunk: string,
+    messageId: string,
+    type: AgentMessageType
+  ): Promise<void> {
+    const data = JSON.stringify({
+      type,
+      message: chunk,
+      messageId,
+    });
+    // Fire and forget but return a resolved promise for compatibility
+    this.streamResponse(`data: ${data}\n\n`).catch(console.error);
+    return Promise.resolve();
   }
 
   protected async executeActionStrategy(
@@ -39,42 +69,90 @@ export class ConversationalAgent extends BaseAgent {
       throw new Error("No input found in memory");
     }
 
-    // Generate and send plan
-    const plan = await AIService.generatePlan(input);
-    await this.sendMessage({
-      type: "plan",
-      message: plan,
-    });
+    try {
+      // Analysis & Planning step
+      const planId = nanoid();
+      // Fire status messages immediately
+      this.processMessage({
+        type: "status",
+        message: "Analyzing your request...",
+        messageId: planId,
+      }).catch(console.error);
 
-    // Send execution status
-    await this.sendMessage({
-      type: "status",
-      message: "Executing task...",
-    });
+      this.processMessage({
+        type: "status",
+        message: "Creating plan...",
+        messageId: planId,
+      }).catch(console.error);
 
-    // Generate and send response
-    this.currentResponse = await AIService.generateResponse(input, plan);
-    await this.sendMessage({
-      type: "result",
-      message: this.currentResponse,
-    });
+      // Start plan generation without waiting for completion
+      const planPromise = AIService.generateStream(
+        input,
+        "You are a planning agent. Break down the user request into clear, actionable steps.",
+        `Create a detailed plan to answer this question: "${input}"`,
+        "plan",
+        (chunk) => {
+          // Stream chunks immediately
+          this.streamChunk(chunk, planId, "plan").catch(console.error);
+          return Promise.resolve();
+        }
+      );
 
-    // Generate and send refinement
-    const refinement = await AIService.generateRefinement(
-      input,
-      this.currentResponse
-    );
-    await this.sendMessage({
-      type: "refinement",
-      message: refinement,
-    });
+      // Response step - start immediately without waiting for plan
+      const responseId = nanoid();
+      this.processMessage({
+        type: "status",
+        message: "Generating response...",
+        messageId: responseId,
+      }).catch(console.error);
 
-    // Final status
-    await this.sendMessage({
-      type: "status",
-      message: "Task completed successfully!",
-    });
+      // Start response generation in parallel
+      const responsePromise = AIService.generateStream(
+        input,
+        "You are a helpful AI assistant. Provide clear, direct responses.",
+        `Answer the question: "${input}"`,
+        "result",
+        (chunk) => {
+          this.streamChunk(chunk, responseId, "result").catch(console.error);
+          return Promise.resolve();
+        }
+      );
 
-    return { success: true };
+      // Refinement step - start as soon as response starts coming
+      const refinementId = nanoid();
+      this.processMessage({
+        type: "status",
+        message: "Refining response...",
+        messageId: refinementId,
+      }).catch(console.error);
+
+      // Start refinement in parallel
+      const refinementPromise = AIService.generateStream(
+        input,
+        "You are a refinement agent. Analyze responses and suggest improvements.",
+        `Refine the response as it comes: "${input}"`,
+        "refinement",
+        (chunk) => {
+          this.streamChunk(chunk, refinementId, "refinement").catch(
+            console.error
+          );
+          return Promise.resolve();
+        }
+      );
+
+      // Wait for all streams to complete
+      await Promise.all([planPromise, responsePromise, refinementPromise]);
+
+      this.processMessage({
+        type: "status",
+        message: "Task completed successfully!",
+        messageId: refinementId,
+      }).catch(console.error);
+
+      return { success: true };
+    } catch (error) {
+      console.error("Error in executeActionStrategy:", error);
+      throw error;
+    }
   }
 }

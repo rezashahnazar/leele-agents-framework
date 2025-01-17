@@ -1,8 +1,15 @@
-export type AgentMessageType = "status" | "plan" | "result" | "refinement";
+export type AgentMessageType =
+  | "status"
+  | "plan"
+  | "result"
+  | "refinement"
+  | "evaluation";
 
 export interface AgentMessage {
   type: AgentMessageType;
   message: string;
+  messageId?: string;
+  isChunk?: boolean;
 }
 
 export interface AgentState {
@@ -14,6 +21,7 @@ export interface AgentState {
     timestamp: number;
   }>;
   metadata: Record<string, any>;
+  currentMessageId?: string;
 }
 
 export interface AgentConfig {
@@ -28,6 +36,11 @@ export interface AgentEnvironment {
   state: AgentState;
   config: AgentConfig;
   sendMessage: (message: AgentMessage) => Promise<void>;
+  sendChunk?: (
+    chunk: string,
+    messageId: string,
+    type: AgentMessageType
+  ) => Promise<void>;
 }
 
 export interface AgentPolicy {

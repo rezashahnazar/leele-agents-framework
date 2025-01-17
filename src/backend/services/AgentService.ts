@@ -8,7 +8,29 @@ export class AgentService {
     stream: TransformStream;
     writer: WritableStreamDefaultWriter;
   } {
-    const stream = new TransformStream();
+    const stream = new TransformStream(
+      {
+        transform(chunk, controller) {
+          // Immediately process each chunk
+          controller.enqueue(chunk);
+        },
+      },
+      {
+        // Minimize buffering on the writable side
+        highWaterMark: 0,
+        size() {
+          return 1;
+        },
+      },
+      {
+        // Minimize buffering on the readable side
+        highWaterMark: 0,
+        size() {
+          return 1;
+        },
+      }
+    );
+
     const writer = stream.writable.getWriter();
     return { stream, writer };
   }
@@ -22,7 +44,6 @@ export class AgentService {
           "A simple conversational agent that can engage in dialogue",
         capabilities: ["text-response", "planning", "refinement"],
       },
-      // Add more agent types here
     };
 
     return configs[type] || configs.conversational;
@@ -37,8 +58,8 @@ export class AgentService {
     const policy = new SimpleConversationalPolicy();
     const agent = new ConversationalAgent(config, policy, writer);
 
-    const executor = new AgentExecutor(async (type, message) => {
-      await agent.processMessage({ type, message });
+    const executor = new AgentExecutor(async (type, message, messageId) => {
+      await agent.processMessage({ type, message, messageId });
     }, writer);
 
     return {
@@ -53,6 +74,7 @@ export class AgentService {
         "Content-Type": "text/event-stream",
         "Cache-Control": "no-cache",
         Connection: "keep-alive",
+        "Transfer-Encoding": "chunked",
       },
     });
   }

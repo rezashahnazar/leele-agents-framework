@@ -1,14 +1,15 @@
-import { Message } from "@/app/types";
+import { Message, StreamChunk } from "@/app/types";
 
 interface StreamOptions {
   onLog: (log: Omit<Message, "timestamp">) => void;
+  onChunk: (chunk: StreamChunk) => void;
   onError: (error: string) => void;
 }
 
 export function useStreamResponse(apiUrl?: string) {
   const streamResponse = async (
     userPrompt: string,
-    { onLog, onError }: StreamOptions
+    { onLog, onChunk, onError }: StreamOptions
   ) => {
     try {
       const response = await fetch(apiUrl || "/api/agent", {
@@ -23,28 +24,40 @@ export function useStreamResponse(apiUrl?: string) {
 
       const reader = response.body.getReader();
       const decoder = new TextDecoder("utf-8");
+      let buffer = "";
 
-      let partialData = "";
+      const processBuffer = () => {
+        const lines = buffer.split("\n");
+        buffer = lines.pop() || ""; // Keep the last incomplete line
+
+        for (const line of lines) {
+          if (line.startsWith("data:")) {
+            try {
+              const json = JSON.parse(line.substring(5).trim());
+              if ("chunk" in json) {
+                onChunk(json as StreamChunk);
+              } else {
+                onLog(json);
+              }
+            } catch (error) {
+              // Ignore parse errors for incomplete chunks
+            }
+          }
+        }
+      };
+
       while (true) {
         const { value, done } = await reader.read();
         if (done) break;
 
-        partialData += decoder.decode(value, { stream: true });
+        buffer += decoder.decode(value, { stream: true });
+        processBuffer();
+      }
 
-        const lines = partialData.split("\n");
-        for (let i = 0; i < lines.length - 1; i++) {
-          if (lines[i].startsWith("data:")) {
-            try {
-              const json = JSON.parse(
-                lines[i].substring("data:".length).trim()
-              );
-              onLog(json);
-            } catch (error) {
-              console.warn("Error parsing SSE data:", error);
-            }
-          }
-        }
-        partialData = lines[lines.length - 1];
+      // Process any remaining data
+      if (buffer) {
+        buffer += decoder.decode(); // Flush the stream
+        processBuffer();
       }
     } catch (error) {
       onError(

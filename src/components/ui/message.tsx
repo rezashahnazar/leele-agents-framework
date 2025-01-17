@@ -11,15 +11,19 @@ import { Button } from "@/components/ui/button";
 import { useState } from "react";
 
 const messageVariants = cva(
-  "group relative flex gap-3 p-4 rounded-lg transition-all duration-1000",
+  "group relative flex gap-4 p-5 rounded-xl transition-all duration-1000",
   {
     variants: {
       type: {
-        status: "bg-blue-500/10 border border-blue-500/20",
-        plan: "bg-purple-500/10 border border-purple-500/20",
-        result: "bg-green-500/10 border border-green-500/20",
-        refinement: "bg-yellow-500/10 border border-yellow-500/20",
-        error: "bg-red-500/10 border border-red-500/20",
+        status:
+          "bg-[hsl(213,60%,98%)] border border-[hsl(213,60%,92%)] dark:bg-[hsl(213,60%,12%)] dark:border-[hsl(213,60%,20%)]",
+        plan: "bg-[hsl(265,40%,98%)] border border-[hsl(265,40%,92%)] dark:bg-[hsl(265,40%,12%)] dark:border-[hsl(265,40%,20%)]",
+        result:
+          "bg-[hsl(145,45%,98%)] border border-[hsl(145,45%,92%)] dark:bg-[hsl(145,45%,12%)] dark:border-[hsl(145,45%,20%)]",
+        refinement:
+          "bg-[hsl(38,45%,98%)] border border-[hsl(38,45%,92%)] dark:bg-[hsl(38,45%,12%)] dark:border-[hsl(38,45%,20%)]",
+        error:
+          "bg-[hsl(355,65%,98%)] border border-[hsl(355,65%,92%)] dark:bg-[hsl(355,65%,12%)] dark:border-[hsl(355,65%,20%)]",
       },
     },
     defaultVariants: {
@@ -36,6 +40,9 @@ interface MessageProps {
   total?: number;
   expanded?: boolean;
   onExpand?: () => void;
+  isStreaming?: boolean;
+  completionReason?: string;
+  attempts?: number;
 }
 
 export function Message({
@@ -46,6 +53,9 @@ export function Message({
   total,
   expanded,
   onExpand,
+  isStreaming,
+  completionReason,
+  attempts,
 }: MessageProps) {
   const [copied, setCopied] = useState(false);
 
@@ -61,102 +71,269 @@ export function Message({
   };
 
   return (
-    <div className={cn(messageVariants({ type }), "relative")}>
-      <div className="flex h-6 w-6 items-center justify-center rounded-full bg-white/20 dark:bg-white/10">
-        <Bot className="h-4 w-4" />
+    <div className={cn(messageVariants({ type }), "relative shadow-sm")}>
+      <div
+        className={cn(
+          "flex h-8 w-8 items-center justify-center rounded-lg",
+          type === "status" &&
+            "bg-[hsl(213,60%,92%)] dark:bg-[hsl(213,60%,20%)]",
+          type === "plan" && "bg-[hsl(265,40%,92%)] dark:bg-[hsl(265,40%,20%)]",
+          type === "result" &&
+            "bg-[hsl(145,45%,92%)] dark:bg-[hsl(145,45%,20%)]",
+          type === "refinement" &&
+            "bg-[hsl(38,45%,92%)] dark:bg-[hsl(38,45%,20%)]",
+          type === "error" && "bg-[hsl(355,65%,92%)] dark:bg-[hsl(355,65%,20%)]"
+        )}
+      >
+        <Bot
+          className={cn(
+            "h-4 w-4",
+            type === "status" &&
+              "text-[hsl(213,60%,40%)] dark:text-[hsl(213,60%,85%)]",
+            type === "plan" &&
+              "text-[hsl(265,40%,45%)] dark:text-[hsl(265,40%,85%)]",
+            type === "result" &&
+              "text-[hsl(145,45%,35%)] dark:text-[hsl(145,45%,85%)]",
+            type === "refinement" &&
+              "text-[hsl(38,45%,35%)] dark:text-[hsl(38,45%,85%)]",
+            type === "error" &&
+              "text-[hsl(355,65%,40%)] dark:text-[hsl(355,65%,85%)]"
+          )}
+        />
       </div>
 
       <div
         className={cn(
-          "flex-1 space-y-2 overflow-hidden",
+          "flex-1 space-y-3 overflow-hidden",
           expanded && "expanded"
         )}
       >
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
           <span
             className={cn(
-              "text-[10px] font-medium uppercase tracking-wider",
-              type === "status" && "text-blue-700 dark:text-blue-300",
-              type === "plan" && "text-purple-700 dark:text-purple-300",
-              type === "result" && "text-green-700 dark:text-green-300",
-              type === "refinement" && "text-yellow-700 dark:text-yellow-300",
-              type === "error" && "text-red-700 dark:text-red-300"
+              "text-xs font-semibold font-vazirmatn tracking-wide",
+              type === "status" &&
+                "text-[hsl(213,60%,40%)] dark:text-[hsl(213,60%,85%)]",
+              type === "plan" &&
+                "text-[hsl(265,40%,45%)] dark:text-[hsl(265,40%,85%)]",
+              type === "result" &&
+                "text-[hsl(145,45%,35%)] dark:text-[hsl(145,45%,85%)]",
+              type === "refinement" &&
+                "text-[hsl(38,45%,35%)] dark:text-[hsl(38,45%,85%)]",
+              type === "error" &&
+                "text-[hsl(355,65%,40%)] dark:text-[hsl(355,65%,85%)]"
             )}
           >
-            {type}
+            {type === "status" && "وضعیت"}
+            {type === "plan" && "برنامه"}
+            {type === "result" && "نتیجه"}
+            {type === "refinement" && "بهبود"}
+            {type === "error" && "خطا"}
           </span>
           {index !== undefined && total !== undefined && (
             <span
               className={cn(
-                "text-[10px] tabular-nums",
-                type === "status" && "text-blue-600/80 dark:text-blue-300/80",
-                type === "plan" && "text-purple-600/80 dark:text-purple-300/80",
-                type === "result" && "text-green-600/80 dark:text-green-300/80",
+                "text-xs tabular-nums font-medium",
+                type === "status" &&
+                  "text-[hsl(213,60%,40%)] dark:text-[hsl(213,60%,85%)] opacity-80",
+                type === "plan" &&
+                  "text-[hsl(265,40%,45%)] dark:text-[hsl(265,40%,85%)] opacity-80",
+                type === "result" &&
+                  "text-[hsl(145,45%,35%)] dark:text-[hsl(145,45%,85%)] opacity-80",
                 type === "refinement" &&
-                  "text-yellow-600/80 dark:text-yellow-300/80",
-                type === "error" && "text-red-600/80 dark:text-red-300/80"
+                  "text-[hsl(38,45%,35%)] dark:text-[hsl(38,45%,85%)] opacity-80",
+                type === "error" &&
+                  "text-[hsl(355,65%,40%)] dark:text-[hsl(355,65%,85%)] opacity-80"
               )}
             >
               #{index + 1}/{total}
             </span>
           )}
           {timestamp && (
-            <span className="ml-auto text-[10px] tabular-nums text-foreground/30">
-              {new Date(timestamp).toLocaleTimeString()}
+            <span className="ml-auto text-xs tabular-nums font-medium text-foreground/60">
+              {new Date(timestamp).toLocaleTimeString("fa-IR")}
             </span>
           )}
         </div>
 
-        <div className="prose prose-sm dark:prose-invert max-w-none overflow-hidden [&>*:first-child]:!mt-0 [&>*:last-child]:!mb-0">
+        <div className="flex-1 space-y-3 overflow-hidden [&>*:first-child]:!mt-0 [&>*:last-child]:!mb-0">
           <ReactMarkdown
             remarkPlugins={[remarkGfm]}
             components={{
               p: ({ children }) => (
-                <p className="my-1.5 text-foreground/90 font-normal text-sm leading-relaxed">
+                <p
+                  className={cn(
+                    "my-2.5 font-normal font-vazirmatn text-sm leading-relaxed",
+                    type === "status" &&
+                      "text-[hsl(213,60%,40%)] dark:text-[hsl(213,60%,85%)] text-opacity-90",
+                    type === "plan" &&
+                      "text-[hsl(265,40%,45%)] dark:text-[hsl(265,40%,85%)] text-opacity-90",
+                    type === "result" &&
+                      "text-[hsl(145,45%,35%)] dark:text-[hsl(145,45%,85%)] text-opacity-90",
+                    type === "refinement" &&
+                      "text-[hsl(38,45%,35%)] dark:text-[hsl(38,45%,85%)] text-opacity-90",
+                    type === "error" &&
+                      "text-[hsl(355,65%,40%)] dark:text-[hsl(355,65%,85%)] text-opacity-90"
+                  )}
+                >
                   {children}
                 </p>
               ),
               h1: ({ children }) => (
-                <h1 className="text-lg font-bold tracking-tight mt-3 mb-2 text-foreground">
+                <h1
+                  className={cn(
+                    "mt-6 mb-4 text-2xl font-bold font-vazirmatn",
+                    type === "status" &&
+                      "text-[hsl(213,60%,40%)] dark:text-[hsl(213,60%,85%)]",
+                    type === "plan" &&
+                      "text-[hsl(265,40%,45%)] dark:text-[hsl(265,40%,85%)]",
+                    type === "result" &&
+                      "text-[hsl(145,45%,35%)] dark:text-[hsl(145,45%,85%)]",
+                    type === "refinement" &&
+                      "text-[hsl(38,45%,35%)] dark:text-[hsl(38,45%,85%)]",
+                    type === "error" &&
+                      "text-[hsl(355,65%,40%)] dark:text-[hsl(355,65%,85%)]"
+                  )}
+                >
                   {children}
                 </h1>
               ),
               h2: ({ children }) => (
-                <h2 className="text-base font-semibold tracking-tight mt-3 mb-1.5 text-foreground">
+                <h2
+                  className={cn(
+                    "mt-5 mb-3 text-xl font-bold font-vazirmatn",
+                    type === "status" &&
+                      "text-[hsl(213,60%,40%)] dark:text-[hsl(213,60%,85%)]",
+                    type === "plan" &&
+                      "text-[hsl(265,40%,45%)] dark:text-[hsl(265,40%,85%)]",
+                    type === "result" &&
+                      "text-[hsl(145,45%,35%)] dark:text-[hsl(145,45%,85%)]",
+                    type === "refinement" &&
+                      "text-[hsl(38,45%,35%)] dark:text-[hsl(38,45%,85%)]",
+                    type === "error" &&
+                      "text-[hsl(355,65%,40%)] dark:text-[hsl(355,65%,85%)]"
+                  )}
+                >
                   {children}
                 </h2>
               ),
               h3: ({ children }) => (
-                <h3 className="text-sm font-semibold tracking-tight mt-2 mb-1.5 text-foreground">
+                <h3
+                  className={cn(
+                    "mt-4 mb-2 text-lg font-bold font-vazirmatn",
+                    type === "status" &&
+                      "text-[hsl(213,60%,40%)] dark:text-[hsl(213,60%,85%)]",
+                    type === "plan" &&
+                      "text-[hsl(265,40%,45%)] dark:text-[hsl(265,40%,85%)]",
+                    type === "result" &&
+                      "text-[hsl(145,45%,35%)] dark:text-[hsl(145,45%,85%)]",
+                    type === "refinement" &&
+                      "text-[hsl(38,45%,35%)] dark:text-[hsl(38,45%,85%)]",
+                    type === "error" &&
+                      "text-[hsl(355,65%,40%)] dark:text-[hsl(355,65%,85%)]"
+                  )}
+                >
                   {children}
                 </h3>
               ),
               ul: ({ children }) => (
-                <ul className="my-1.5 ml-1 list-disc [&>li]:mt-1 marker:text-foreground/50">
+                <ul
+                  className={cn(
+                    "my-3 list-disc list-inside space-y-2 font-vazirmatn",
+                    type === "status" &&
+                      "text-[hsl(213,60%,40%)] dark:text-[hsl(213,60%,85%)]",
+                    type === "plan" &&
+                      "text-[hsl(265,40%,45%)] dark:text-[hsl(265,40%,85%)]",
+                    type === "result" &&
+                      "text-[hsl(145,45%,35%)] dark:text-[hsl(145,45%,85%)]",
+                    type === "refinement" &&
+                      "text-[hsl(38,45%,35%)] dark:text-[hsl(38,45%,85%)]",
+                    type === "error" &&
+                      "text-[hsl(355,65%,40%)] dark:text-[hsl(355,65%,85%)]"
+                  )}
+                >
                   {children}
                 </ul>
               ),
               ol: ({ children }) => (
-                <ol className="my-1.5 ml-1 list-decimal [&>li]:mt-1 marker:text-foreground/50">
+                <ol
+                  className={cn(
+                    "my-3 list-decimal list-inside space-y-2 font-vazirmatn",
+                    type === "status" &&
+                      "text-[hsl(213,60%,40%)] dark:text-[hsl(213,60%,85%)]",
+                    type === "plan" &&
+                      "text-[hsl(265,40%,45%)] dark:text-[hsl(265,40%,85%)]",
+                    type === "result" &&
+                      "text-[hsl(145,45%,35%)] dark:text-[hsl(145,45%,85%)]",
+                    type === "refinement" &&
+                      "text-[hsl(38,45%,35%)] dark:text-[hsl(38,45%,85%)]",
+                    type === "error" &&
+                      "text-[hsl(355,65%,40%)] dark:text-[hsl(355,65%,85%)]"
+                  )}
+                >
                   {children}
                 </ol>
               ),
               li: ({ children }) => (
-                <li className="text-sm text-foreground/90 pl-1">{children}</li>
+                <li
+                  className={cn(
+                    "text-sm leading-relaxed font-vazirmatn",
+                    type === "status" &&
+                      "text-[hsl(213,60%,40%)] dark:text-[hsl(213,60%,85%)]",
+                    type === "plan" &&
+                      "text-[hsl(265,40%,45%)] dark:text-[hsl(265,40%,85%)]",
+                    type === "result" &&
+                      "text-[hsl(145,45%,35%)] dark:text-[hsl(145,45%,85%)]",
+                    type === "refinement" &&
+                      "text-[hsl(38,45%,35%)] dark:text-[hsl(38,45%,85%)]",
+                    type === "error" &&
+                      "text-[hsl(355,65%,40%)] dark:text-[hsl(355,65%,85%)]"
+                  )}
+                >
+                  {children}
+                </li>
               ),
               blockquote: ({ children }) => (
-                <blockquote className="my-2 border-l-2 border-foreground/20 pl-1.5 italic text-foreground/80 text-sm">
+                <blockquote
+                  className={cn(
+                    "my-3 border-r-2 pr-4 italic font-vazirmatn",
+                    type === "status" &&
+                      "border-[hsl(213,60%,92%)] dark:border-[hsl(213,60%,20%)]",
+                    type === "plan" &&
+                      "border-[hsl(265,40%,92%)] dark:border-[hsl(265,40%,20%)]",
+                    type === "result" &&
+                      "border-[hsl(145,45%,92%)] dark:border-[hsl(145,45%,20%)]",
+                    type === "refinement" &&
+                      "border-[hsl(38,45%,92%)] dark:border-[hsl(38,45%,20%)]",
+                    type === "error" &&
+                      "border-[hsl(355,65%,92%)] dark:border-[hsl(355,65%,20%)]"
+                  )}
+                >
                   {children}
                 </blockquote>
               ),
-              code(props) {
+              code: (props) => {
                 const { className, children } = props;
                 const match = /language-(\w+)/.exec(className || "");
                 const isInline = !match && !String(children).includes("\n");
 
                 if (isInline) {
                   return (
-                    <code className="rounded-md bg-primary/10 dark:bg-primary/20 px-1 py-0.5 font-mono text-xs text-primary dark:text-primary/90">
+                    <code
+                      className={cn(
+                        "rounded px-1.5 py-0.5 font-mono text-sm",
+                        type === "status" &&
+                          "bg-[hsl(213,60%,95%)] dark:bg-[hsl(213,60%,15%)] text-[hsl(213,60%,35%)] dark:text-[hsl(213,60%,90%)]",
+                        type === "plan" &&
+                          "bg-[hsl(265,40%,95%)] dark:bg-[hsl(265,40%,15%)] text-[hsl(265,40%,40%)] dark:text-[hsl(265,40%,90%)]",
+                        type === "result" &&
+                          "bg-[hsl(145,45%,95%)] dark:bg-[hsl(145,45%,15%)] text-[hsl(145,45%,30%)] dark:text-[hsl(145,45%,90%)]",
+                        type === "refinement" &&
+                          "bg-[hsl(38,45%,95%)] dark:bg-[hsl(38,45%,15%)] text-[hsl(38,45%,30%)] dark:text-[hsl(38,45%,90%)]",
+                        type === "error" &&
+                          "bg-[hsl(355,65%,95%)] dark:bg-[hsl(355,65%,15%)] text-[hsl(355,65%,35%)] dark:text-[hsl(355,65%,90%)]"
+                      )}
+                    >
                       {children}
                     </code>
                   );
@@ -166,23 +343,79 @@ export function Message({
                 const code = String(children).replace(/\n$/, "");
 
                 return (
-                  <div className="my-2 overflow-hidden rounded-lg border border-foreground/10">
+                  <div
+                    className={cn(
+                      "my-3 overflow-hidden rounded-lg border",
+                      type === "status" &&
+                        "border-[hsl(213,60%,92%)] dark:border-[hsl(213,60%,20%)] bg-[hsl(213,60%,97%)] dark:bg-[hsl(213,60%,10%)]",
+                      type === "plan" &&
+                        "border-[hsl(265,40%,92%)] dark:border-[hsl(265,40%,20%)] bg-[hsl(265,40%,97%)] dark:bg-[hsl(265,40%,10%)]",
+                      type === "result" &&
+                        "border-[hsl(145,45%,92%)] dark:border-[hsl(145,45%,20%)] bg-[hsl(145,45%,97%)] dark:bg-[hsl(145,45%,10%)]",
+                      type === "refinement" &&
+                        "border-[hsl(38,45%,92%)] dark:border-[hsl(38,45%,20%)] bg-[hsl(38,45%,97%)] dark:bg-[hsl(38,45%,10%)]",
+                      type === "error" &&
+                        "border-[hsl(355,65%,92%)] dark:border-[hsl(355,65%,20%)] bg-[hsl(355,65%,97%)] dark:bg-[hsl(355,65%,10%)]"
+                    )}
+                  >
                     <CodeBlock code={code} language={language} />
                   </div>
                 );
               },
               strong: ({ children }) => (
-                <strong className="font-semibold text-foreground">
+                <strong
+                  className={cn(
+                    "font-semibold font-vazirmatn",
+                    type === "status" &&
+                      "text-[hsl(213,60%,35%)] dark:text-[hsl(213,60%,90%)]",
+                    type === "plan" &&
+                      "text-[hsl(265,40%,40%)] dark:text-[hsl(265,40%,90%)]",
+                    type === "result" &&
+                      "text-[hsl(145,45%,30%)] dark:text-[hsl(145,45%,90%)]",
+                    type === "refinement" &&
+                      "text-[hsl(38,45%,30%)] dark:text-[hsl(38,45%,90%)]",
+                    type === "error" &&
+                      "text-[hsl(355,65%,35%)] dark:text-[hsl(355,65%,90%)]"
+                  )}
+                >
                   {children}
                 </strong>
               ),
               em: ({ children }) => (
-                <em className="italic text-foreground/90">{children}</em>
+                <em
+                  className={cn(
+                    "italic font-vazirmatn",
+                    type === "status" &&
+                      "text-[hsl(213,60%,35%)] dark:text-[hsl(213,60%,90%)]",
+                    type === "plan" &&
+                      "text-[hsl(265,40%,40%)] dark:text-[hsl(265,40%,90%)]",
+                    type === "result" &&
+                      "text-[hsl(145,45%,30%)] dark:text-[hsl(145,45%,90%)]",
+                    type === "refinement" &&
+                      "text-[hsl(38,45%,30%)] dark:text-[hsl(38,45%,90%)]",
+                    type === "error" &&
+                      "text-[hsl(355,65%,35%)] dark:text-[hsl(355,65%,90%)]"
+                  )}
+                >
+                  {children}
+                </em>
               ),
               a: ({ children, href }) => (
                 <a
                   href={href}
-                  className="font-medium text-primary underline underline-offset-2 hover:text-primary/80 transition-colors"
+                  className={cn(
+                    "underline underline-offset-4 hover:no-underline font-vazirmatn",
+                    type === "status" &&
+                      "text-[hsl(213,60%,35%)] dark:text-[hsl(213,60%,90%)]",
+                    type === "plan" &&
+                      "text-[hsl(265,40%,40%)] dark:text-[hsl(265,40%,90%)]",
+                    type === "result" &&
+                      "text-[hsl(145,45%,30%)] dark:text-[hsl(145,45%,90%)]",
+                    type === "refinement" &&
+                      "text-[hsl(38,45%,30%)] dark:text-[hsl(38,45%,90%)]",
+                    type === "error" &&
+                      "text-[hsl(355,65%,35%)] dark:text-[hsl(355,65%,90%)]"
+                  )}
                 >
                   {children}
                 </a>
@@ -197,17 +430,43 @@ export function Message({
           <Button
             size="icon"
             variant="ghost"
-            className="absolute bottom-2 right-2 h-6 w-6 bg-foreground/10 opacity-20 group-hover:opacity-100 transition-all duration-200"
+            className="absolute bottom-3 left-3 h-8 w-8 bg-foreground/5 dark:bg-foreground/10 opacity-0 group-hover:opacity-100 transition-all duration-200"
             onClick={handleCopy}
           >
             {copied ? (
-              <Check className="h-3 w-3" />
+              <Check className="h-4 w-4 text-foreground/80" />
             ) : (
-              <Copy className="h-3 w-3" />
+              <Copy className="h-4 w-4 text-foreground/80" />
             )}
           </Button>
         )}
       </div>
+
+      {completionReason && (
+        <div
+          className={cn(
+            "mt-3 pt-3 text-xs border-t",
+            type === "status" &&
+              "border-[hsl(var(--status-border))] text-[hsl(var(--status-fg))] text-opacity-80",
+            type === "plan" &&
+              "border-[hsl(var(--plan-border))] text-[hsl(var(--plan-fg))] text-opacity-80",
+            type === "result" &&
+              "border-[hsl(var(--result-border))] text-[hsl(var(--result-fg))] text-opacity-80",
+            type === "refinement" &&
+              "border-[hsl(var(--refinement-border))] text-[hsl(var(--refinement-fg))] text-opacity-80",
+            type === "error" &&
+              "border-[hsl(var(--error-border))] text-[hsl(var(--error-fg))] text-opacity-80"
+          )}
+        >
+          <div className="flex items-center gap-2">
+            <span>وضعیت نهایی:</span>
+            <span className="font-medium">{completionReason}</span>
+            {attempts !== undefined && (
+              <span className="mr-auto">تعداد تلاش‌ها: {attempts}</span>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

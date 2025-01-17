@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, memo } from "react";
 import { Message } from "@/app/types";
 import { Message as MessageComponent } from "@/components/ui/message";
 import { Panel, PanelHeader, PanelContent } from "@/components/ui/panel";
@@ -10,12 +10,15 @@ import { Button } from "@/components/ui/button";
 import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { MessageSkeleton } from "@/components/ui/message-skeleton";
+import { useAggregatedLogs } from "@/hooks/useAggregatedLogs";
 
 interface LogsPanelProps {
   logs: Message[];
   setLogs: React.Dispatch<React.SetStateAction<Message[]>>;
   isLoading?: boolean;
 }
+
+const MemoizedMessageComponent = memo(MessageComponent);
 
 export function LogsPanel({ logs, setLogs, isLoading }: LogsPanelProps) {
   const [filter, setFilter] = useState<string>("all");
@@ -24,8 +27,14 @@ export function LogsPanel({ logs, setLogs, isLoading }: LogsPanelProps) {
     null
   );
   const [showScrollButton, setShowScrollButton] = useState(false);
+  const [streamingMessageId, setStreamingMessageId] = useState<string | null>(
+    null
+  );
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const shouldAutoScrollRef = useRef(true);
+
+  // Use aggregated logs
+  const aggregatedLogs = useAggregatedLogs(logs);
 
   useEffect(() => {
     const scrollContainer = scrollContainerRef.current;
@@ -46,7 +55,17 @@ export function LogsPanel({ logs, setLogs, isLoading }: LogsPanelProps) {
     if (shouldAutoScrollRef.current) {
       scrollToBottom();
     }
-  }, [logs]);
+  }, [aggregatedLogs]); // Update dependency to aggregatedLogs
+
+  // Track the latest message for streaming animation
+  useEffect(() => {
+    if (isLoading && aggregatedLogs.length > 0) {
+      const latestMessage = aggregatedLogs[aggregatedLogs.length - 1];
+      setStreamingMessageId(latestMessage.messageId || latestMessage.id);
+    } else {
+      setStreamingMessageId(null);
+    }
+  }, [isLoading, aggregatedLogs]);
 
   const scrollToBottom = () => {
     const scrollContainer = scrollContainerRef.current;
@@ -70,7 +89,7 @@ export function LogsPanel({ logs, setLogs, isLoading }: LogsPanelProps) {
     setLogs([]);
   };
 
-  const groupedLogs = logs.reduce((acc, log) => {
+  const groupedLogs = aggregatedLogs.reduce((acc, log) => {
     if (filter !== "all" && log.type !== filter) return acc;
     if (
       searchTerm &&
@@ -79,7 +98,7 @@ export function LogsPanel({ logs, setLogs, isLoading }: LogsPanelProps) {
       return acc;
 
     const date = log.timestamp;
-    const key = date.toLocaleDateString();
+    const key = date.toLocaleDateString("fa-IR");
     if (!acc[key]) {
       acc[key] = [];
     }
@@ -96,17 +115,17 @@ export function LogsPanel({ logs, setLogs, isLoading }: LogsPanelProps) {
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               onClear={handleClear}
-              placeholder="Search messages..."
+              placeholder="جستجو در پیام‌ها..."
               className="w-[200px]"
             />
             <FilterButton
               options={[
-                { label: "All", value: "all" },
-                { label: "Status", value: "status" },
-                { label: "Plan", value: "plan" },
-                { label: "Result", value: "result" },
-                { label: "Refine", value: "refinement" },
-                { label: "Error", value: "error" },
+                { label: "همه", value: "all" },
+                { label: "وضعیت", value: "status" },
+                { label: "برنامه", value: "plan" },
+                { label: "نتیجه", value: "result" },
+                { label: "بهبود", value: "refinement" },
+                { label: "خطا", value: "error" },
               ]}
               value={filter}
               onChange={setFilter}
@@ -119,7 +138,7 @@ export function LogsPanel({ logs, setLogs, isLoading }: LogsPanelProps) {
               size="sm"
               className="border-destructive text-destructive hover:bg-destructive/10 h-7"
             >
-              Clear
+              پاک کردن
             </Button>
           )}
         </div>
@@ -132,16 +151,16 @@ export function LogsPanel({ logs, setLogs, isLoading }: LogsPanelProps) {
           {Object.entries(groupedLogs).length > 0 ? (
             <div className="space-y-4 pb-2">
               {Object.entries(groupedLogs).map(([date, messages]) => (
-                <div key={date}>
-                  <h3 className="sticky top-0 z-10 px-3 py-1.5 text-[10px] font-medium uppercase tracking-wider text-muted-foreground/60 flex items-center gap-2 bg-background/80 backdrop-blur-lg">
+                <div key={date} className="space-y-2">
+                  <h3 className="sticky top-0 z-10 px-3 py-1.5 text-[10px] font-medium font-vazirmatn uppercase tracking-wider text-muted-foreground/60 flex items-center gap-2 bg-background/80 backdrop-blur-lg">
                     <span className="h-px flex-1 bg-border/20" />
                     <span className="shrink-0">{date}</span>
                     <span className="h-px flex-1 bg-border/20" />
                   </h3>
                   <div className="space-y-2 px-2">
                     {messages.map((message, index) => (
-                      <MessageComponent
-                        key={index}
+                      <MemoizedMessageComponent
+                        key={message.messageId}
                         type={message.type}
                         message={message.message}
                         timestamp={message.timestamp.getTime()}
@@ -149,6 +168,11 @@ export function LogsPanel({ logs, setLogs, isLoading }: LogsPanelProps) {
                         onExpand={() => handleExpand(index)}
                         index={index}
                         total={messages.length}
+                        isStreaming={
+                          isLoading &&
+                          (message.messageId || message.id) ===
+                            streamingMessageId
+                        }
                       />
                     ))}
                   </div>
@@ -162,7 +186,7 @@ export function LogsPanel({ logs, setLogs, isLoading }: LogsPanelProps) {
             </div>
           ) : (
             <div className="h-full flex items-center justify-center text-muted-foreground">
-              <p className="text-sm">No messages yet</p>
+              <p className="text-sm font-vazirmatn">هنوز پیامی وجود ندارد</p>
             </div>
           )}
         </div>
@@ -171,7 +195,7 @@ export function LogsPanel({ logs, setLogs, isLoading }: LogsPanelProps) {
         size="sm"
         variant="secondary"
         className={cn(
-          "absolute bottom-4 right-4 rounded-full shadow-md transition-all duration-200 h-8 w-8 p-0",
+          "absolute bottom-4 left-4 rounded-full shadow-md transition-all duration-200 h-8 w-8 p-0",
           showScrollButton
             ? "opacity-100 translate-y-0"
             : "opacity-0 translate-y-4 pointer-events-none"

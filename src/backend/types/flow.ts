@@ -1,45 +1,51 @@
-export type FlowStepType =
-  | "sequential"
-  | "parallel"
-  | "conditional"
-  | "goal-based";
+import { AgentMessageType } from "./agent";
 
-export type FlowStep = {
+export interface FlowContext {
+  sendMessage: (
+    type: AgentMessageType,
+    message: string,
+    messageId?: string
+  ) => Promise<void>;
+  messageId: string;
+}
+
+export type FlowExecuteFunction = (
+  input: any,
+  context: FlowContext
+) => Promise<any>;
+
+export interface BaseFlowStep {
   name: string;
   description: string;
-  execute: (input: any) => Promise<any>;
-  type: FlowStepType;
+  type: string;
+  execute: FlowExecuteFunction;
   statusMessage?: string;
-  outputProcessor?: (output: any) => string;
-};
+  outputProcessor?: (output: any) => any;
+}
 
-export type ParallelStep = FlowStep & {
+export interface SequentialFlowStep extends BaseFlowStep {
+  type: "sequential";
+}
+
+export interface ParallelFlowStep extends BaseFlowStep {
   type: "parallel";
   items: (outputs: any[]) => any[];
-};
+}
 
-export type ConditionalStep = FlowStep & {
-  type: "conditional";
-  condition: (input: any) => Promise<boolean>;
-  onTrue: FlowStep[];
-  onFalse: FlowStep[];
-};
-
-export type GoalBasedStep = FlowStep & {
+export interface GoalBasedFlowStep extends BaseFlowStep {
   type: "goal-based";
-  goalCheck: (result: any) => Promise<boolean>;
+  evaluator: (result: any, context: FlowContext) => Promise<boolean>;
   maxAttempts: number;
-};
+}
 
 export type AnyFlowStep =
-  | FlowStep
-  | ParallelStep
-  | ConditionalStep
-  | GoalBasedStep;
+  | SequentialFlowStep
+  | ParallelFlowStep
+  | GoalBasedFlowStep;
 
-export type Flow = {
+export interface Flow {
   name: string;
   description: string;
   steps: AnyFlowStep[];
   onError?: (error: Error) => Promise<string>;
-};
+}

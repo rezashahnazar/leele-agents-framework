@@ -3,8 +3,8 @@ import { type Metadata } from "next";
 import { LeelEAgentUI } from "@/components/features/agent-ui";
 
 export const metadata: Metadata = {
-  title: "Simple Agent | LeelE Agent",
-  description: "LeelE Agent Interface",
+  title: "LeelE | دستیار هوشمند",
+  description: "رابط کاربری دستیار لیله",
 };
 
 const Home: FC = () => {
@@ -12,8 +12,8 @@ const Home: FC = () => {
     <main className="min-h-screen w-full">
       <LeelEAgentUI
         apiUrl="/api/agent"
-        title="LeelE Agent"
-        description="The LeelE Agent is a powerful AI agent that can help you with a wide range of tasks!"
+        title="LeelE"
+        description="دستیار هوشمند"
       />
     </main>
   );
