@@ -18,9 +18,10 @@ const smartChefFlow = new FlowBuilder()
     type: "sequential",
     execute: async (foodTitle: string) => {
       console.log("Chief analyzing food:", foodTitle);
-      const response = await AIService.generateResponse(
+      const response = await AIService.generate(
         foodTitle,
-        `You are a master chef. For the dish "${foodTitle}", list exactly 5 main ingredients. 
+        "You are a master chef.",
+        `For the dish "${foodTitle}", list exactly 5 main ingredients. 
          Return ONLY a JSON array of 5 strings, each being an ingredient name.`
       );
       const ingredients = JSON.parse(response);
@@ -38,12 +39,12 @@ const smartChefFlow = new FlowBuilder()
     "Players create recipes based on single ingredients",
     async (ingredient: string) => {
       console.log("Player received ingredient:", ingredient);
-      const response = await AIService.generateResponse(
+      const response = await AIService.generate(
         ingredient,
         `You are Player #${Math.floor(
           Math.random() * 1000
-        )}, a creative chef in our game.
-         You've been given ONE main ingredient: "${ingredient}".
+        )}, a creative chef in our game.`,
+        `You've been given ONE main ingredient: "${ingredient}".
          Create a recipe that you think might be the original dish this ingredient came from.
          
          Include:
@@ -76,10 +77,10 @@ const smartChefFlow = new FlowBuilder()
     type: "sequential",
     execute: async (recipes: string[]) => {
       console.log("Summarizer received recipes:", recipes.length);
-      const response = await AIService.generateResponse(
+      const response = await AIService.generate(
         JSON.stringify(recipes),
-        `You are a food critic writing an entertaining article.
-         You've received ${recipes.length} different interpretations from our chef players.
+        "You are a food critic writing an entertaining article.",
+        `You've received ${recipes.length} different interpretations from our chef players.
          Each chef only knew ONE main ingredient and had to guess the original dish!
          
          Write a fun and engaging article that:

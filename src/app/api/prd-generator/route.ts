@@ -17,10 +17,10 @@ const prdGeneratorFlow = new FlowBuilder()
       "Analyze the high-level requirements and create a structured outline",
     type: "sequential",
     execute: async (requirements: string) => {
-      const response = await AIService.generateResponse(
+      const response = await AIService.generate(
         requirements,
-        `You are a senior product manager analyzing high-level requirements.
-         For the given requirements: "${requirements}", create a structured analysis that includes:
+        "You are a senior product manager analyzing high-level requirements.",
+        `For the given requirements: "${requirements}", create a structured analysis that includes:
          1. Core problem statement
          2. Target audience
          3. Key objectives
@@ -39,8 +39,9 @@ const prdGeneratorFlow = new FlowBuilder()
     description: "Conduct market research and competitive analysis",
     type: "sequential",
     execute: async (analysis: string) => {
-      const response = await AIService.generateResponse(
+      const response = await AIService.generate(
         analysis,
+        "You are a market research analyst.",
         `Based on the initial analysis, conduct a thorough market research:
          1. Identify key market trends
          2. Analyze potential competitors
@@ -69,8 +70,9 @@ const prdGeneratorFlow = new FlowBuilder()
           "Analyze security requirements, data protection needs, and compliance considerations.",
       };
 
-      return AIService.generateResponse(
+      return AIService.generate(
         input.content,
+        "You are a technical product analyst.",
         prompts[input.type] || "Analyze general requirements"
       );
     },
@@ -91,8 +93,9 @@ const prdGeneratorFlow = new FlowBuilder()
     description: "Create implementation timeline and integration plan",
     type: "sequential",
     execute: async (features: string) => {
-      return AIService.generateResponse(
+      return AIService.generate(
         features,
+        "You are a project planner.",
         `Create a comprehensive implementation plan including:
          1. Development phases
          2. Resource requirements
@@ -110,8 +113,9 @@ const prdGeneratorFlow = new FlowBuilder()
     "PRD Assembly",
     "Assemble and refine the final PRD document",
     async (inputs: string) => {
-      return AIService.generateResponse(
+      return AIService.generate(
         inputs,
+        "You are a PRD documentation specialist.",
         `Create a professional PRD document that includes:
          1. Executive Summary
          2. Problem Statement & Objectives
@@ -128,8 +132,9 @@ const prdGeneratorFlow = new FlowBuilder()
       );
     },
     async (prd: string) => {
-      const evaluation = await AIService.generateResponse(
+      const evaluation = await AIService.generate(
         prd,
+        "You are a PRD quality analyst.",
         `Evaluate this PRD's completeness and quality by analyzing:
          1. Clarity and structure
          2. Technical depth

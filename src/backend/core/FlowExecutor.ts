@@ -1,25 +1,36 @@
 import {
   Flow,
   AnyFlowStep,
-  ParallelStep,
-  ConditionalStep,
-  GoalBasedStep,
+  ParallelFlowStep,
+  ConditionalFlowStep,
+  GoalBasedFlowStep,
+  FlowContext,
 } from "../types/flow";
 import { AgentMessageType } from "../types/agent";
 
 export class FlowExecutor {
   constructor(
-    private sendMessage: (
+    private sendMessageCallback: (
       type: AgentMessageType,
-      message: string
+      message: string,
+      messageId?: string
     ) => Promise<void>,
     private writer: WritableStreamDefaultWriter
   ) {}
 
+  private async sendMessage(
+    type: AgentMessageType,
+    message: string,
+    messageId?: string
+  ): Promise<void> {
+    await this.sendMessageCallback(type, message, messageId);
+  }
+
   private async executeStep(
     step: AnyFlowStep,
     input: any,
-    outputs: any[]
+    outputs: any[],
+    context: FlowContext
   ): Promise<any> {
     if (step.statusMessage) {
       await this.sendMessage("status", step.statusMessage);
@@ -29,19 +40,28 @@ export class FlowExecutor {
 
     switch (step.type) {
       case "parallel":
-        result = await this.executeParallelStep(step as ParallelStep, outputs);
+        result = await this.executeParallelStep(
+          step as ParallelFlowStep,
+          outputs,
+          context
+        );
         break;
       case "conditional":
         result = await this.executeConditionalStep(
-          step as ConditionalStep,
-          input
+          step as ConditionalFlowStep,
+          input,
+          context
         );
         break;
       case "goal-based":
-        result = await this.executeGoalBasedStep(step as GoalBasedStep, input);
+        result = await this.executeGoalBasedStep(
+          step as GoalBasedFlowStep,
+          input,
+          context
+        );
         break;
       default:
-        result = await step.execute(input);
+        result = await step.execute(input, context);
     }
 
     const processedResult = step.outputProcessor
@@ -60,8 +80,9 @@ export class FlowExecutor {
   }
 
   private async executeParallelStep(
-    step: ParallelStep,
-    outputs: any[]
+    step: ParallelFlowStep,
+    outputs: any[],
+    context: FlowContext
   ): Promise<any[]> {
     try {
       const items = step.items(outputs);
@@ -71,7 +92,8 @@ export class FlowExecutor {
 
       await this.sendMessage(
         "status",
-        `Starting parallel execution of ${items.length} items...`
+        `Starting parallel execution of ${items.length} items...`,
+        context.messageId
       );
 
       // Execute all items in parallel and collect results
@@ -82,10 +104,11 @@ export class FlowExecutor {
               "status",
               `Processing item ${index + 1}/${items.length}: ${
                 item.type || "Unknown type"
-              }`
+              }`,
+              context.messageId
             );
 
-            const result = await step.execute(item);
+            const result = await step.execute(item, context);
 
             // Check if the result indicates an error
             if (result && typeof result === "object" && "error" in result) {
@@ -95,14 +118,16 @@ export class FlowExecutor {
               );
               await this.sendMessage(
                 "status",
-                `Item ${index + 1} failed: ${result.error}`
+                `Item ${index + 1} failed: ${result.error}`,
+                context.messageId
               );
               return result;
             }
 
             await this.sendMessage(
               "status",
-              `Completed item ${index + 1}/${items.length}`
+              `Completed item ${index + 1}/${items.length}`,
+              context.messageId
             );
             return result;
           } catch (error) {
@@ -111,7 +136,8 @@ export class FlowExecutor {
             console.error(`Error in parallel item ${index + 1}:`, error);
             await this.sendMessage(
               "status",
-              `Item ${index + 1} failed: ${errorMessage}`
+              `Item ${index + 1} failed: ${errorMessage}`,
+              context.messageId
             );
             return { type: item.type, error: errorMessage };
           }
@@ -126,7 +152,8 @@ export class FlowExecutor {
 
       await this.sendMessage(
         "status",
-        `Parallel execution completed: ${successful} succeeded, ${failed} failed`
+        `Parallel execution completed: ${successful} succeeded, ${failed} failed`,
+        context.messageId
       );
 
       // Process and send the combined results
@@ -148,7 +175,8 @@ export class FlowExecutor {
             error instanceof Error ? error.message : "Unknown error";
           await this.sendMessage(
             "status",
-            `Error processing parallel results: ${errorMessage}`
+            `Error processing parallel results: ${errorMessage}`,
+            context.messageId
           );
         }
       } else {
@@ -164,30 +192,36 @@ export class FlowExecutor {
       const errorMessage =
         error instanceof Error ? error.message : "Unknown error occurred";
       console.error("Error in parallel step:", errorMessage);
-      await this.sendMessage("status", `Parallel step failed: ${errorMessage}`);
+      await this.sendMessage(
+        "status",
+        `Parallel step failed: ${errorMessage}`,
+        context.messageId
+      );
       throw new Error(`Parallel step failed: ${errorMessage}`);
     }
   }
 
   private async executeConditionalStep(
-    step: ConditionalStep,
-    input: any
+    step: ConditionalFlowStep,
+    input: any,
+    context: FlowContext
   ): Promise<any> {
-    return step.execute(input);
+    return step.execute(input, context);
   }
 
   private async executeGoalBasedStep(
-    step: GoalBasedStep,
-    input: any
+    step: GoalBasedFlowStep,
+    input: any,
+    context: FlowContext
   ): Promise<any> {
     let attempts = 0;
     let result: any;
 
     while (attempts < step.maxAttempts) {
       attempts++;
-      result = await step.execute(input);
+      result = await step.execute(input, context);
 
-      if (await step.goalCheck(result)) {
+      if (await step.evaluator(result, context)) {
         return result;
       }
 
@@ -209,9 +243,18 @@ export class FlowExecutor {
   async executeFlow(flow: Flow, initialInput: any): Promise<void> {
     try {
       const outputs: any[] = [];
+      const context: FlowContext = {
+        sendMessage: this.sendMessage.bind(this),
+        messageId: "",
+      };
 
       for (const step of flow.steps) {
-        const result = await this.executeStep(step, initialInput, outputs);
+        const result = await this.executeStep(
+          step,
+          initialInput,
+          outputs,
+          context
+        );
         outputs.push(result);
       }
 

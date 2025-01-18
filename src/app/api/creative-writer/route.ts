@@ -17,9 +17,10 @@ const creativeWriterFlow = new FlowBuilder()
     description: "Analyze the topic and create a story outline",
     type: "sequential",
     execute: async (topic: string) => {
-      const response = await AIService.generateResponse(
+      const response = await AIService.generate(
         topic,
-        `You are a story planner. For the topic "${topic}", create a detailed outline.
+        "You are a story planner.",
+        `For the topic "${topic}", create a detailed outline.
          Include:
          1. Main plot points
          2. Key characters
@@ -37,8 +38,9 @@ const creativeWriterFlow = new FlowBuilder()
     "Perspective Check",
     "Determine if the story would benefit from multiple perspectives",
     async (outline: string) => {
-      const response = await AIService.generateResponse(
+      const response = await AIService.generate(
         outline,
+        "You are a story analyzer.",
         `Based on this outline, would this story benefit from multiple character perspectives?
          Consider:
          1. Plot complexity
@@ -57,8 +59,9 @@ const creativeWriterFlow = new FlowBuilder()
           "Generate story segments from different character viewpoints",
         type: "sequential",
         execute: async (characterInfo: string) => {
-          return AIService.generateResponse(
+          return AIService.generate(
             characterInfo,
+            "You are a creative writer.",
             `Write a story segment from this character's perspective.
              Make it emotional and personal to their viewpoint.`
           );
@@ -72,8 +75,9 @@ const creativeWriterFlow = new FlowBuilder()
         description: "Generate a cohesive single-perspective story",
         type: "sequential",
         execute: async (outline: string) => {
-          return AIService.generateResponse(
+          return AIService.generate(
             outline,
+            "You are a creative writer.",
             `Write a complete story following this outline.
              Focus on creating a strong, unified narrative voice.`
           );
@@ -90,8 +94,9 @@ const creativeWriterFlow = new FlowBuilder()
       // Check if the story is already in string format
       const storyText =
         typeof story === "object" ? JSON.stringify(story) : story;
-      return AIService.generateResponse(
+      return AIService.generate(
         storyText,
+        "You are a story editor.",
         `Improve this story by:
          1. Enhancing descriptive language
          2. Strengthening character motivations
@@ -101,8 +106,9 @@ const creativeWriterFlow = new FlowBuilder()
       );
     },
     async (story: string) => {
-      const evaluation = await AIService.generateResponse(
+      const evaluation = await AIService.generate(
         story,
+        "You are a story critic.",
         `Evaluate this story's quality by analyzing:
          1. Descriptive language
          2. Character development
@@ -143,7 +149,11 @@ const creativeWriterFlow = new FlowBuilder()
             throw new Error(`Unknown content type: ${input.type}`);
         }
 
-        const response = await AIService.generateResponse(content, prompt);
+        const response = await AIService.generate(
+          content,
+          "You are a content specialist.",
+          prompt
+        );
         return { type: input.type, result: response };
       } catch (error) {
         console.error(`Error generating ${input.type}:`, error);
@@ -166,17 +176,17 @@ const creativeWriterFlow = new FlowBuilder()
         { type: "summary", content: storyContent },
         { type: "title", content: storyContent },
         { type: "themes", content: storyContent },
-      ];
+      ] as Array<{ type: string; content: string }>;
     },
     "Generating complementary content...",
-    (results) => {
+    (results: Array<{ type: string; result: string; error?: string }>) => {
       try {
         // Ensure we have an array of results by wrapping single result in array if needed
         const resultsArray = Array.isArray(results) ? results : [results];
 
         // Collect all successful results
         const validResults = resultsArray.filter(
-          (result) =>
+          (result): result is { type: string; result: string } =>
             result &&
             typeof result === "object" &&
             "type" in result &&
@@ -240,7 +250,7 @@ const creativeWriterFlow = new FlowBuilder()
     }
   )
   .onError(
-    async (error) =>
+    async (error: Error) =>
       `Sorry, there was an error in the creative process: ${error.message}`
   )
   .build();

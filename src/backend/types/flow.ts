@@ -38,10 +38,15 @@ export interface GoalBasedFlowStep extends BaseFlowStep {
   maxAttempts: number;
 }
 
+export interface ConditionalFlowStep extends BaseFlowStep {
+  type: "conditional";
+}
+
 export type AnyFlowStep =
   | SequentialFlowStep
   | ParallelFlowStep
-  | GoalBasedFlowStep;
+  | GoalBasedFlowStep
+  | ConditionalFlowStep;
 
 export interface Flow {
   name: string;

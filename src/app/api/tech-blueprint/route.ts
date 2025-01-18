@@ -16,16 +16,15 @@ const techBlueprintFlow = new FlowBuilder()
     description: "Analyze the software concept and create initial structure",
     type: "sequential",
     execute: async (concept: string) => {
-      const response = await AIService.generateResponse(
+      const response = await AIService.generate(
         concept,
-        `You are a senior software architect analyzing a software concept.
-         For the given concept: "${concept}", create a structured analysis that includes:
-         1. Core problem definition
-         2. Target users and stakeholders
-         3. Key technical objectives
-         4. Success criteria
-         5. Initial technical scope
-         6. High-level system requirements
+        "You are a senior software architect analyzing a software concept.",
+        `For the given concept: "${concept}", create a structured analysis that includes:
+         1. Core technical requirements
+         2. System architecture overview
+         3. Key technical challenges
+         4. Technology stack recommendations
+         5. Initial scope boundaries
          
          Return the analysis in a clear, structured format.`
       );
@@ -40,16 +39,17 @@ const techBlueprintFlow = new FlowBuilder()
     description: "Research technical approaches and best practices",
     type: "sequential",
     execute: async (analysis: string) => {
-      const response = await AIService.generateResponse(
+      const response = await AIService.generate(
         analysis,
-        `Based on the initial analysis, conduct thorough technical research:
-         1. Identify relevant technologies and frameworks
-         2. Analyze similar technical solutions
-         3. Research best practices and patterns
-         4. Identify potential technical challenges
-         5. Consider scalability and performance factors
+        "You are a technical architect.",
+        `Based on the initial analysis, design the system architecture:
+         1. Component breakdown
+         2. Data flow diagrams
+         3. API specifications
+         4. Integration points
+         5. Security considerations
          
-         Structure your findings professionally.`
+         Present the architecture in a clear, technical format.`
       );
       return response;
     },
@@ -61,20 +61,18 @@ const techBlueprintFlow = new FlowBuilder()
     "Analyze different architectural aspects in parallel",
     async (input: { type: string; content: string }) => {
       const prompts: Record<string, string> = {
-        backend: "Detail backend architecture, APIs, databases, and services.",
+        backend: "Detail backend services, databases, and API design.",
         frontend:
-          "Outline frontend architecture, state management, and UI/UX considerations.",
-        infrastructure:
-          "Describe infrastructure needs, deployment, and DevOps practices.",
+          "Outline UI/UX architecture, state management, and client-side considerations.",
+        devops: "Describe deployment, scaling, and operational requirements.",
         security:
           "Analyze security requirements, authentication, and data protection.",
-        performance:
-          "Evaluate performance considerations, optimizations, and scalability.",
       };
 
-      return AIService.generateResponse(
+      return AIService.generate(
         input.content,
-        prompts[input.type] || "Analyze general architectural requirements"
+        "You are a specialized technical architect.",
+        prompts[input.type] || "Analyze general technical requirements"
       );
     },
     (previousOutputs: any[]) => {
@@ -95,20 +93,17 @@ const techBlueprintFlow = new FlowBuilder()
     description: "Make and document key technical decisions",
     type: "sequential",
     execute: async (architectureAnalysis: string) => {
-      return AIService.generateResponse(
+      return AIService.generate(
         architectureAnalysis,
-        `Based on the architectural analysis, make and document key technical decisions:
-         1. Technology stack selection with rationale
-         2. Architecture patterns and their justification
-         3. Data storage and management approach
-         4. API design principles
-         5. Security measures
-         6. Performance optimization strategies
+        "You are a technical project manager.",
+        `Create a comprehensive technical implementation plan including:
+         1. Development phases
+         2. Technical dependencies
+         3. Resource allocation
+         4. Risk mitigation
+         5. Timeline estimates
          
-         For each decision:
-         - Document the options considered
-         - Provide reasoning for the chosen approach
-         - List potential trade-offs and mitigations`
+         Present this in a structured, technical format.`
       );
     },
     statusMessage: "Making and documenting key technical decisions...",
@@ -119,17 +114,22 @@ const techBlueprintFlow = new FlowBuilder()
     description: "Create detailed implementation plan",
     type: "sequential",
     execute: async (decisions: string) => {
-      return AIService.generateResponse(
+      return AIService.generate(
         decisions,
-        `Create a comprehensive implementation plan including:
-         1. Development phases and milestones
-         2. Technical dependencies and their order
-         3. Required resources and expertise
-         4. Potential technical challenges and solutions
-         5. Testing and quality assurance approach
-         6. Deployment strategy
+        "You are a technical project manager.",
+        `Create a comprehensive technical blueprint that includes:
+         1. Executive Technical Summary
+         2. System Architecture
+         3. Component Specifications
+         4. API Documentation
+         5. Security Measures
+         6. Implementation Roadmap
+         7. Technical Requirements
+         8. Performance Considerations
+         9. Scalability Plan
+         10. Technical Appendices
          
-         Present this in a structured, actionable format.`
+         Format this as a complete technical blueprint document.`
       );
     },
     statusMessage: "Creating detailed implementation plan...",
@@ -139,34 +139,33 @@ const techBlueprintFlow = new FlowBuilder()
     "Blueprint Assembly",
     "Assemble and refine the final technical blueprint",
     async (inputs: string) => {
-      return AIService.generateResponse(
+      return AIService.generate(
         inputs,
-        `Create a professional technical blueprint that includes:
-         1. Executive Summary
-         2. System Overview
-         3. Technical Architecture
-         4. Design Decisions and Rationale
-         5. Implementation Plan
-         6. Security Considerations
-         7. Performance Optimizations
-         8. Testing Strategy
-         9. Deployment Plan
-         10. Risk Analysis and Mitigation
-         11. Technical Recommendations
-         12. Appendices (API specs, data models, etc.)
+        "You are a technical documentation specialist.",
+        `Create a comprehensive technical blueprint that includes:
+         1. Executive Technical Summary
+         2. System Architecture
+         3. Component Specifications
+         4. API Documentation
+         5. Security Measures
+         6. Implementation Roadmap
+         7. Technical Requirements
+         8. Performance Considerations
+         9. Scalability Plan
+         10. Technical Appendices
          
-         Format this as a complete, professional technical blueprint document.`
+         Format this as a complete technical blueprint document.`
       );
     },
     async (blueprint: string) => {
-      const evaluation = await AIService.generateResponse(
+      const evaluation = await AIService.generate(
         blueprint,
+        "You are a technical review specialist.",
         `Evaluate this technical blueprint's completeness and quality by analyzing:
          1. Technical depth and accuracy
-         2. Architectural clarity
+         2. Architecture completeness
          3. Implementation feasibility
-         4. Risk coverage
-         5. Overall completeness
+         4. Security considerations
          
          Return ONLY a single number between 1-10 representing overall quality.`
       );

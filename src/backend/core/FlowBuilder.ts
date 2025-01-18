@@ -28,6 +28,28 @@ export class FlowBuilder {
     return this;
   }
 
+  conditional(
+    name: string,
+    description: string,
+    condition: (input: any) => Promise<boolean>,
+    trueSteps: AnyFlowStep[],
+    falseSteps: AnyFlowStep[],
+    statusMessage?: string
+  ): FlowBuilder {
+    const step: AnyFlowStep = {
+      name,
+      description,
+      type: "conditional",
+      execute: async (input: any) => {
+        const result = await condition(input);
+        return result ? trueSteps : falseSteps;
+      },
+      statusMessage,
+    };
+    this.steps.push(step);
+    return this;
+  }
+
   parallel(
     name: string,
     description: string,
