@@ -4,7 +4,7 @@ import { LeelEAgentUI } from "@/components/features/agent-ui";
 
 export const metadata: Metadata = {
   title: "LeelE | دستیار هوشمند",
-  description: "رابط کاربری دستیار لیله",
+  description: "رابط کاربری دستیار LeelE",
 };
 
 const Home: FC = () => {
