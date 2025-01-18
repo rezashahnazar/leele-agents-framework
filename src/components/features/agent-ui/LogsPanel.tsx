@@ -98,7 +98,7 @@ export function LogsPanel({ logs, setLogs, isLoading }: LogsPanelProps) {
       return acc;
 
     const date = log.timestamp;
-    const key = date.toLocaleDateString("fa-IR");
+    const key = date.toLocaleDateString("en-US");
     if (!acc[key]) {
       acc[key] = [];
     }
@@ -115,17 +115,17 @@ export function LogsPanel({ logs, setLogs, isLoading }: LogsPanelProps) {
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               onClear={handleClear}
-              placeholder="جستجو در پیام‌ها..."
+              placeholder="Search messages..."
               className="w-[200px]"
             />
             <FilterButton
               options={[
-                { label: "همه", value: "all" },
-                { label: "وضعیت", value: "status" },
-                { label: "برنامه", value: "plan" },
-                { label: "نتیجه", value: "result" },
-                { label: "بهبود", value: "refinement" },
-                { label: "خطا", value: "error" },
+                { label: "All", value: "all" },
+                { label: "Status", value: "status" },
+                { label: "Plan", value: "plan" },
+                { label: "Result", value: "result" },
+                { label: "Refinement", value: "refinement" },
+                { label: "Error", value: "error" },
               ]}
               value={filter}
               onChange={setFilter}
@@ -138,7 +138,7 @@ export function LogsPanel({ logs, setLogs, isLoading }: LogsPanelProps) {
               size="sm"
               className="border-destructive text-destructive hover:bg-destructive/10 h-7"
             >
-              پاک کردن
+              Clear
             </Button>
           )}
         </div>
@@ -152,9 +152,11 @@ export function LogsPanel({ logs, setLogs, isLoading }: LogsPanelProps) {
             <div className="space-y-4 pb-2">
               {Object.entries(groupedLogs).map(([date, messages]) => (
                 <div key={date} className="space-y-2">
-                  <h3 className="sticky top-0 z-10 px-3 py-1.5 text-[10px] font-medium font-vazirmatn uppercase tracking-wider text-muted-foreground/60 flex items-center gap-2 bg-background/80 backdrop-blur-lg">
+                  <h3 className="sticky top-0 z-10 px-3 py-1.5 text-[10px] font-medium font-sans uppercase tracking-wider text-muted-foreground/60 flex items-center gap-2 bg-background/80 backdrop-blur-lg">
                     <span className="h-px flex-1 bg-border/20" />
-                    <span className="shrink-0">{date}</span>
+                    <span className="shrink-0">
+                      {new Date(date).toLocaleDateString("en-US")}
+                    </span>
                     <span className="h-px flex-1 bg-border/20" />
                   </h3>
                   <div className="space-y-2 px-2">
@@ -186,7 +188,7 @@ export function LogsPanel({ logs, setLogs, isLoading }: LogsPanelProps) {
             </div>
           ) : (
             <div className="h-full flex items-center justify-center text-muted-foreground">
-              <p className="text-sm font-vazirmatn">هنوز پیامی وجود ندارد</p>
+              <p className="text-sm font-sans">No messages yet</p>
             </div>
           )}
         </div>

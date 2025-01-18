@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useAutoResize } from "@/hooks/useAutoResize";
 import { cn } from "@/lib/utils";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 
 interface PromptInputProps {
   value: string;
@@ -29,14 +29,14 @@ export function PromptInput({
             <div className="absolute -inset-0.5 bg-gradient-to-r from-primary/[0.03] to-secondary/[0.03] rounded-xl blur opacity-75 group-hover:opacity-100 transition duration-1000"></div>
             <div className="relative flex items-center bg-foreground/[0.02] dark:bg-foreground/[0.04] rounded-lg">
               {isInputFocused && !isLoading && (
-                <div className="absolute left-4 bottom-3.5 flex items-center gap-2 text-xs text-foreground/50">
-                  <kbd className="rounded bg-foreground/[0.03] dark:bg-foreground/[0.06] px-1.5 py-0.5 text-[10px] font-medium">
-                    ⌘
-                  </kbd>
+                <div className="absolute right-4 bottom-3.5 flex items-center gap-2 text-xs text-foreground/50">
+                  <span className="mx-1">to send</span>
                   <kbd className="rounded bg-foreground/[0.03] dark:bg-foreground/[0.06] px-1.5 py-0.5 text-[10px] font-medium">
                     Enter
                   </kbd>
-                  <span className="mx-1">برای ارسال</span>
+                  <kbd className="rounded bg-foreground/[0.03] dark:bg-foreground/[0.06] px-1.5 py-0.5 text-[10px] font-medium">
+                    ⌘
+                  </kbd>
                 </div>
               )}
               <textarea
@@ -52,7 +52,7 @@ export function PromptInput({
                     onSubmit();
                   }
                 }}
-                placeholder="چطور می‌تونم کمکتون کنم؟"
+                placeholder="How can I help you?"
                 className={cn(
                   "w-full resize-none rounded-lg bg-transparent px-5 py-3.5 text-sm",
                   "placeholder:text-foreground/40 focus:outline-none",
@@ -84,8 +84,8 @@ export function PromptInput({
               <div className="animate-spin opacity-80">⟳</div>
             ) : (
               <div className="flex items-center gap-2.5">
-                <span className="text-xs">ارسال</span>
-                <ArrowLeft className="h-4 w-4" />
+                <span className="text-xs">Send</span>
+                <ArrowRight className="h-4 w-4" />
               </div>
             )}
           </button>

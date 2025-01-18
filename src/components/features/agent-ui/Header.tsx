@@ -19,15 +19,15 @@ export function Header({
         <div className="relative group">
           <div className="absolute -inset-1 bg-gradient-to-r from-primary/[0.03] to-secondary/[0.03] rounded-full blur opacity-75 group-hover:opacity-100 transition duration-1000"></div>
           <div className="relative flex h-8 w-8 items-center justify-center rounded-lg bg-foreground/[0.02] dark:bg-foreground/[0.04]">
-            <img src="/logo.svg" alt="لیله" className="h-5 w-5 opacity-80" />
+            <img src="/logo.svg" alt="LeelE" className="h-5 w-5 opacity-80" />
           </div>
         </div>
         <div className="flex items-baseline gap-3">
-          <h1 className="text-2xl font-bold font-vazirmatn text-foreground/90">
+          <h1 className="text-2xl font-bold font-sans text-foreground/90">
             {title}
           </h1>
           <div className="h-4 w-px bg-border/10" />
-          <p className="text-sm font-medium font-vazirmatn text-foreground/50 hidden sm:block">
+          <p className="text-sm font-medium font-sans text-foreground/50 hidden sm:block">
             {description}
           </p>
         </div>

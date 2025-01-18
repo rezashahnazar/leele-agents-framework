@@ -19,7 +19,7 @@ const config = {
     },
     extend: {
       fontFamily: {
-        vazirmatn: ["Vazirmatn", "sans-serif"],
+        sans: ["Inter", "system-ui", "sans-serif"],
       },
       colors: {
         border: "hsl(var(--border))",

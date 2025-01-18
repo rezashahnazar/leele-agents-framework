@@ -111,7 +111,7 @@ export function Message({
         <div className="flex items-center gap-3">
           <span
             className={cn(
-              "text-xs font-semibold font-vazirmatn tracking-wide",
+              "text-xs font-semibold font-sans tracking-wide",
               type === "status" &&
                 "text-[hsl(213,60%,40%)] dark:text-[hsl(213,60%,85%)]",
               type === "plan" &&
@@ -124,11 +124,11 @@ export function Message({
                 "text-[hsl(355,65%,40%)] dark:text-[hsl(355,65%,85%)]"
             )}
           >
-            {type === "status" && "وضعیت"}
-            {type === "plan" && "برنامه"}
-            {type === "result" && "نتیجه"}
-            {type === "refinement" && "بهبود"}
-            {type === "error" && "خطا"}
+            {type === "status" && "Status"}
+            {type === "plan" && "Plan"}
+            {type === "result" && "Result"}
+            {type === "refinement" && "Refinement"}
+            {type === "error" && "Error"}
           </span>
           {index !== undefined && total !== undefined && (
             <span
@@ -151,7 +151,7 @@ export function Message({
           )}
           {timestamp && (
             <span className="ml-auto text-xs tabular-nums font-medium text-foreground/60">
-              {new Date(timestamp).toLocaleTimeString("fa-IR")}
+              {new Date(timestamp).toLocaleTimeString("en-US")}
             </span>
           )}
         </div>
@@ -163,7 +163,7 @@ export function Message({
               p: ({ children }) => (
                 <p
                   className={cn(
-                    "my-2.5 font-normal font-vazirmatn text-sm leading-relaxed",
+                    "my-2.5 font-normal font-sans text-sm leading-relaxed",
                     type === "status" &&
                       "text-[hsl(213,60%,40%)] dark:text-[hsl(213,60%,85%)] text-opacity-90",
                     type === "plan" &&
@@ -182,7 +182,7 @@ export function Message({
               h1: ({ children }) => (
                 <h1
                   className={cn(
-                    "mt-6 mb-4 text-2xl font-bold font-vazirmatn",
+                    "mt-6 mb-4 text-2xl font-bold font-sans",
                     type === "status" &&
                       "text-[hsl(213,60%,40%)] dark:text-[hsl(213,60%,85%)]",
                     type === "plan" &&
@@ -201,7 +201,7 @@ export function Message({
               h2: ({ children }) => (
                 <h2
                   className={cn(
-                    "mt-5 mb-3 text-xl font-bold font-vazirmatn",
+                    "mt-5 mb-3 text-xl font-bold font-sans",
                     type === "status" &&
                       "text-[hsl(213,60%,40%)] dark:text-[hsl(213,60%,85%)]",
                     type === "plan" &&
@@ -220,7 +220,7 @@ export function Message({
               h3: ({ children }) => (
                 <h3
                   className={cn(
-                    "mt-4 mb-2 text-lg font-bold font-vazirmatn",
+                    "mt-4 mb-2 text-lg font-bold font-sans",
                     type === "status" &&
                       "text-[hsl(213,60%,40%)] dark:text-[hsl(213,60%,85%)]",
                     type === "plan" &&
@@ -239,7 +239,7 @@ export function Message({
               ul: ({ children }) => (
                 <ul
                   className={cn(
-                    "my-3 list-disc list-inside space-y-2 font-vazirmatn",
+                    "my-3 list-disc list-inside space-y-2 font-sans",
                     type === "status" &&
                       "text-[hsl(213,60%,40%)] dark:text-[hsl(213,60%,85%)]",
                     type === "plan" &&
@@ -258,7 +258,7 @@ export function Message({
               ol: ({ children }) => (
                 <ol
                   className={cn(
-                    "my-3 list-decimal list-inside space-y-2 font-vazirmatn",
+                    "my-3 list-decimal list-inside space-y-2 font-sans",
                     type === "status" &&
                       "text-[hsl(213,60%,40%)] dark:text-[hsl(213,60%,85%)]",
                     type === "plan" &&
@@ -277,7 +277,7 @@ export function Message({
               li: ({ children }) => (
                 <li
                   className={cn(
-                    "text-sm leading-relaxed font-vazirmatn",
+                    "text-sm leading-relaxed font-sans",
                     type === "status" &&
                       "text-[hsl(213,60%,40%)] dark:text-[hsl(213,60%,85%)]",
                     type === "plan" &&
@@ -296,7 +296,7 @@ export function Message({
               blockquote: ({ children }) => (
                 <blockquote
                   className={cn(
-                    "my-3 border-r-2 pr-4 italic font-vazirmatn",
+                    "my-3 border-r-2 pr-4 italic font-sans",
                     type === "status" &&
                       "border-[hsl(213,60%,92%)] dark:border-[hsl(213,60%,20%)]",
                     type === "plan" &&
@@ -365,7 +365,7 @@ export function Message({
               strong: ({ children }) => (
                 <strong
                   className={cn(
-                    "font-semibold font-vazirmatn",
+                    "font-semibold font-sans",
                     type === "status" &&
                       "text-[hsl(213,60%,35%)] dark:text-[hsl(213,60%,90%)]",
                     type === "plan" &&
@@ -384,7 +384,7 @@ export function Message({
               em: ({ children }) => (
                 <em
                   className={cn(
-                    "italic font-vazirmatn",
+                    "italic font-sans",
                     type === "status" &&
                       "text-[hsl(213,60%,35%)] dark:text-[hsl(213,60%,90%)]",
                     type === "plan" &&
@@ -404,7 +404,7 @@ export function Message({
                 <a
                   href={href}
                   className={cn(
-                    "underline underline-offset-4 hover:no-underline font-vazirmatn",
+                    "underline underline-offset-4 hover:no-underline font-sans",
                     type === "status" &&
                       "text-[hsl(213,60%,35%)] dark:text-[hsl(213,60%,90%)]",
                     type === "plan" &&
@@ -459,10 +459,10 @@ export function Message({
           )}
         >
           <div className="flex items-center gap-2">
-            <span>وضعیت نهایی:</span>
+            <span>Final Status:</span>
             <span className="font-medium">{completionReason}</span>
             {attempts !== undefined && (
-              <span className="mr-auto">تعداد تلاش‌ها: {attempts}</span>
+              <span className="mr-auto">Attempts: {attempts}</span>
             )}
           </div>
         </div>
